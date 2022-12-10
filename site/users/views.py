@@ -4,6 +4,8 @@ from django.urls.base import reverse_lazy
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
+from django.contrib import messages
+from django.template.loader import render_to_string
 
 from users import forms
 from users.models import User
@@ -18,11 +20,18 @@ class RegisterView(CreateView):
         'form_title': 'Регистрация',
     }
     success_url = reverse_lazy('static_pages:home')
+    success_message = (
+        'Вы <strong>успешно</strong> зарегистрировались'
+    )
 
     def form_valid(self, form):
         result = super().form_valid(form)
         user = form.save()
         login(self.request, user)
+        messages.add_message(
+            self.request, messages.SUCCESS, self.success_message,
+            extra_tags='alert-success'
+            )
         return result
 
 
@@ -42,7 +51,7 @@ class LogoutView(LoginRequiredMixin, AuthViews.LogoutView):
 
 class ChangePasswordView(LoginRequiredMixin, AuthViews.PasswordChangeView):
     template_name = 'base_form.html'
-    success_url = reverse_lazy('users:password_change_done')
+    success_url = reverse_lazy('users:profile')
     form_class = forms.ChangeUserPasswordForm
     extra_context = {
         'title_name': 'Изменить пароль',
@@ -50,14 +59,14 @@ class ChangePasswordView(LoginRequiredMixin, AuthViews.PasswordChangeView):
         'button_text': 'Изменить'
     }
 
-
-class ChangePasswordDoneView(
-    LoginRequiredMixin, AuthViews.PasswordChangeDoneView
-):
-    template_name = 'Users/password_change_done.html'
-    extra_context = {
-        'title_name': 'Пароль изменен'
-    }
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            '<h6>Ваш пароль был успешно изменен.</h6>',
+            extra_tags='alert-success'
+            )
+        return result
 
 
 class ResetPasswordView(AuthViews.PasswordResetView):
@@ -66,37 +75,41 @@ class ResetPasswordView(AuthViews.PasswordResetView):
     from_email = settings.OWNER_EMAIL
     form_class = forms.ResetUserPasswordForm
     model = User
-    success_url = reverse_lazy('users:reset_password_done')
+    success_url = reverse_lazy('static_pages:home')
     extra_context = {
         'title_name': 'Восстановление пароля',
         'form_title': 'Восстановление пароля',
         'button_text': 'Восстановить'
     }
 
-
-class ResetPasswordDoneView(AuthViews.PasswordResetDoneView):
-    template_name = 'Users/reset_password_done.html'
-    extra_context = {
-        'title_name': 'Восстановление пароля'
-    }
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.add_message(
+            self.request, messages.INFO,
+            render_to_string('Users/messages/reset_password.html'),
+            extra_tags='alert-primary'
+            )
+        return result
 
 
 class PasswordResetConfirmView(AuthViews.PasswordResetConfirmView):
     template_name = 'base_form.html'
     form_class = forms.ResetUserPasswordConfirmForm
-    success_url = reverse_lazy('users:password_reset_done')
+    success_url = reverse_lazy('users:login')
     extra_context = {
         'title_name': 'Сброс пароля',
         'form_title': 'Сброс пароля',
         'button_text': 'Изменить пароль'
     }
 
-
-class PasswordResetCompleteView(AuthViews.PasswordResetCompleteView):
-    template_name = 'Users/password_reset_done.html'
-    extra_context = {
-        'title_name': 'Успешный сброс пароля'
-    }
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            render_to_string('Users/messages/password_reset_done.html'),
+            extra_tags='alert-success'
+            )
+        return result
 
 
 class UserDetailView(DetailView):
@@ -112,7 +125,7 @@ class UserDetailView(DetailView):
 class UserProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = forms.UpdateUserProfileForm
-    template_name = 'Users/password_change_form.html'
+    template_name = 'Users/profile_form.html'
     success_url = reverse_lazy('users:profile')
     extra_context = {
         'title_name': 'Мой профиль',
@@ -122,3 +135,11 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            '<h6>Данные успешно сохранены</h6>',
+            extra_tags='alert-success'
+            )
+        return super().form_valid(form)

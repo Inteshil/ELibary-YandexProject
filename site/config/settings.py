@@ -25,7 +25,8 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 MODULE_APPS = [
-    'debug_toolbar'
+    'django_cleanup.apps.CleanupConfig',
+    'debug_toolbar',
 ]
 LOCAL_APPS = [
     'static_pages.apps.StaticPagesConfig',

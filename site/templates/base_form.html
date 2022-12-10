@@ -2,6 +2,9 @@
 
 {% block content %}
 <div class="w-50 mx-auto form-row">
+    {% block begin_form %}
+    {% endblock begin_form %}
+
     <h3>{{ form_title }}</h3>
     {{ form_description }}
 
@@ -17,10 +20,12 @@
         {% for field in form %}
         <div class="my-3">
             <div class="text-muted">{{ field.help_text }}</div>
+
             <div class="input-group">
                 <span class="input-group-text">{{ field.label }}</span>
                 {{ field }}
             </div>
+
             <div>
                 {% for error in field.errors %}
                 <p class="text-danger">{{ error }}</p>
