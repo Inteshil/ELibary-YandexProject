@@ -29,6 +29,15 @@ main_menu = [
         MenuElem('На главную', 'static_pages:home'),
         MenuElem('О проекте', 'static_pages:about'),
     )),
+    MenuElem('Аккаунт', can_see=[UserGroup.Auth], sub_elems=(
+        MenuElem('Профиль', 'users:profile'),
+        MenuElem('Выйти', 'users:logout'),
+    )),
+
+    MenuElem('Авторизация', can_see=[UserGroup.NotAuth], sub_elems=(
+        MenuElem('Регистрация', 'users:register'),
+        MenuElem('Вход', 'users:login'),
+    )),
 ]
 
 

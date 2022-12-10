@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row bg-light">
+    <h1 class="text-center">Информация о пользователе {{ user.nickname }}</h1>
+    <h3>Почта: {{ user.email }}</h3>
+    <h3>День рождения: 
+    {% if user.birthday_date %}
+    {{ user.birthday_date }}
+    {% else %}
+    не указано
+    {% endif %}
+    </h3>
+    <div class="text-center my-3">
+        <a class="btn btn-primary" href="{% url 'users:user_list' %}"><h3>К списку пользователей</h3></a>
+    </div>
+</div>
+
+{% endblock content %}

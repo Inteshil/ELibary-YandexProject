@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">№</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Почта</th>
+        <th scope="col">День рождения</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td><a href="{{ user.get_absolute_url }}">{{ user.nickname }}</a></td>
+            <td>{{ user.email }}</td>
+            {% if user.birthday_date %}
+            <td>{{ user.birthday_date }}</td>
+            {% else %}
+            <td>Не указано</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}

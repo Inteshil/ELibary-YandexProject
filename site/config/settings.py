@@ -1,4 +1,7 @@
 from pathlib import Path
+
+from django.urls.base import reverse_lazy
+
 import environ
 
 
@@ -102,3 +105,11 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'emails'
+OWNER_EMAIL = env.str('OWNER_EMAIL', default='default@gmail.com')
+
+AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = reverse_lazy('users:login')
+LOGIN_REDIRECT_URL = reverse_lazy('static_pages:home')
