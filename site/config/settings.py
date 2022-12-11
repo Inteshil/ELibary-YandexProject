@@ -32,6 +32,7 @@ LOCAL_APPS = [
     'static_pages.apps.StaticPagesConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
+    'catalog.apps.CatalogConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + MODULE_APPS + LOCAL_APPS
 

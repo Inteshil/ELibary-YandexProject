@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="album py-5">
+  <div class="container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      {% for book in books %}
+        {% include 'catalog/book_card.html' %}
+      {% empty %}
+      <h2>Мы не нашли ни одной книги :[</h2>
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
