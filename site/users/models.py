@@ -1,8 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
+from django.db import models
 from django.urls import reverse
+
+from users.validators import birthday_date_validator
 
 
 class UserManager(BaseUserManager):
@@ -45,7 +47,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('почта', unique=True)
 
     username = models.CharField('имя пользователя', max_length=50)
-    birthday_date = models.DateField('день рождения', null=True, blank=True)
+    birthday_date = models.DateField(
+        'день рождения', null=True, blank=True,
+        validators=[birthday_date_validator]
+        )
 
     is_staff = models.BooleanField(
         'статус персонала', default=False,
