@@ -1,0 +1,26 @@
+{% load static %}
+
+<div class="col">
+    <div class="card shadow-sm">
+
+      <img class="card-img border" src="{{ book.preview.url }}" alt="картинка">
+
+      <div class="card-body">
+        <h3 class="card-text">{{ book.name }}</h3>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="btn-group">
+            <a href="{{ book.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+            <a href="{{ book.content.url }}" class="btn btn-sm btn-outline-secondary">Читать</a>
+          </div>
+          <small class="text-muted small-text">Оценка</small>
+        </div>
+        <hr>
+        {% with tags=book.tags.all|slice:3 %}
+        {% for tag in tags %}
+        <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
+        {% endfor %}
+        {% endwith %}
+      </div>
+
+    </div>
+  </div>

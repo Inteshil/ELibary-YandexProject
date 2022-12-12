@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row bg-light">
+    <div class="text-center my-2">
+        {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Аватарка" class="rounded-circle" style="width: 150px;">
+        {% else %}
+        <img src="{% static 'users/no_avatar.png' %}" alt="Аватарка" class="rounded-circle" style="width: 150px;">
+        {% endif %}
+        <h1>{{ user.username }}</h1>
+    </div>
+    <h3>Почта: {{ user.email }}</h3>
+    <h3>День рождения: 
+    {% if user.birthday_date %}
+    {{ user.birthday_date }}
+    {% else %}
+    не указано
+    {% endif %}
+    </h3>
+</div>
+
+{% endblock content %}

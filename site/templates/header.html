@@ -1,0 +1,34 @@
+<header class="container d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="{% url 'static_pages:home' %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+    <span class="fs-4">ELibrary</span>
+    </a>
+
+    <ul class="nav nav-pills">
+        {% for elem in menu %}
+
+        {% if elem.sub_elems %}
+        <li class="nav-item dropdown">
+            {% if elem.is_active %}
+                <p class="nav-link dropdown-toggle active" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ elem.title }}</p>
+                {% else %}
+                <p class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ elem.title }}</p>
+            {% endif %}
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for sub_elem in elem.sub_elems %}
+                <li><a class="dropdown-item" href="{% url sub_elem.url_name %}">{{ sub_elem.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+            {% if elem.is_active %}
+            <p class="nav-link active">{{ elem.title }}</p>
+            {% else %}
+            <a href="{% url elem.url_name %}" class="nav-link">{{ elem.title }}</a>
+            {% endif %}
+        </li>
+        {% endif %}
+
+        {% endfor %}
+    </ul>
+</header>

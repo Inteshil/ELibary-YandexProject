@@ -1,20 +1,22 @@
 from pathlib import Path
 
+from django.urls.base import reverse_lazy
+
 import environ
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env('.env')
+environ.Env.read_env()
 
-SECRET_KEY = env.str('SECRET_KEY', default='This is not secret')
-
+SECRET_KEY = env.str('SECRET_KEY', default='Unsafe secret key')
 DEBUG = env.bool('DEBUG', default=True)
-
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
-INSTALLED_APPS = [
+INTERNAL_IPS = ['127.0.0.1']
+
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,6 +24,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+MODULE_APPS = [
+    'django_cleanup.apps.CleanupConfig',
+    'debug_toolbar',
+]
+LOCAL_APPS = [
+    'static_pages.apps.StaticPagesConfig',
+    'users.apps.UsersConfig',
+    'core.apps.CoreConfig',
+    'catalog.apps.CatalogConfig',
+]
+INSTALLED_APPS = DJANGO_APPS + MODULE_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -31,6 +44,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -38,7 +53,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,15 +93,25 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'ru'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
-STATIC_URL = '/static/'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'emails'
+OWNER_EMAIL = env.str('OWNER_EMAIL', default='default@gmail.com')
+
+AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = reverse_lazy('users:login')
+LOGIN_REDIRECT_URL = reverse_lazy('static_pages:home')
