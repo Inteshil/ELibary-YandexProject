@@ -7,6 +7,21 @@
     <div class="col-7">
         <h1 class="text-center title-text">{{ book.name }}</h1>
         <hr>
+        {% if book_rating_num > 0 %}
+        <h3>Средняя оценка: {{ book_rating_avg }}</h3>
+        <h3>Количество оценок: {{ book_rating_num }}</h3>
+        {% else %}
+        <h3>Похоже эту книгу еще никто не оценил...</h3>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+        {% if user_rating %}
+        <h3>Ваша оценка: {{ user_rating }}</h3>
+        <a class="btn btn-secondary" href="{% url 'rating:set_rating' book.pk %}">Изменить оценку</a>
+        {% else %}
+        <a class="btn btn-secondary" href="{% url 'rating:set_rating' book.pk %}">Оценить</a>
+        {% endif %}
+        {% endif %}
+        <hr>
         <h3>Описание:</h3><p>{{ book.description }}</p>
         <hr>
         {% for tag in book.tags.all %}

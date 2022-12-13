@@ -37,7 +37,7 @@ class RegisterView(CreateView):
 
 class LoginView(AuthViews.LoginView):
     form_class = forms.LoginUserForm
-    template_name = 'Users/login_form.html'
+    template_name = 'users/login_form.html'
     extra_context = {
         'title_name': 'Вход',
         'button_text': 'Войти',
@@ -71,7 +71,7 @@ class ChangePasswordView(LoginRequiredMixin, AuthViews.PasswordChangeView):
 
 class ResetPasswordView(AuthViews.PasswordResetView):
     template_name = 'base_form.html'
-    email_template_name = 'Users/reset_password_email.html'
+    email_template_name = 'users/reset_password_email.html'
     from_email = settings.OWNER_EMAIL
     form_class = forms.ResetUserPasswordForm
     model = User
@@ -113,7 +113,7 @@ class PasswordResetConfirmView(AuthViews.PasswordResetConfirmView):
 
 
 class UserDetailView(DetailView):
-    template_name = 'Users/user_details.html'
+    template_name = 'users/user_details.html'
     queryset = User.objects.actived()
     pk_url_kwarg = 'user_id'
     context_object_name = 'user'
@@ -125,7 +125,7 @@ class UserDetailView(DetailView):
 class UserProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = forms.UpdateUserProfileForm
-    template_name = 'Users/profile_form.html'
+    template_name = 'users/profile_form.html'
     success_url = reverse_lazy('users:profile')
     extra_context = {
         'title_name': 'Мой профиль',
