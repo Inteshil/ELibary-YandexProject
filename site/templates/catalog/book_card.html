@@ -10,7 +10,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="btn-group">
             <a href="{{ book.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-            <a href="{{ book.content.url }}" class="btn btn-sm btn-outline-secondary">Читать</a>
+            <a href="{{ book.chapters.first.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">Читать</a>
           </div>
           <small class="text-muted small-text">Оценка</small>
         </div>

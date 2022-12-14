@@ -17,10 +17,12 @@
     <script type = "text/javascript" src="{% static 'bootstrap-5/js/bootstrap.bundle.min.js' %}"></script>
 </head>
 
-<body>
-    
+<body class="bg-light">
+
 <!-- Главное меню -->
+{% block main_menu %}
 {% get_main_menu request %}
+{% endblock main_menu %}
 
 <!-- Сообщения пользователю -->
 {% if messages %}
