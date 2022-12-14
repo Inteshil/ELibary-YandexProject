@@ -49,7 +49,7 @@ class BookChapter(models.Model):
     name = models.CharField('название', max_length=100)
     number = models.PositiveIntegerField('порядковый номер')
     is_published = models.BooleanField('опубликовано', default=True)
-    content = models.TextField('содержание', max_length=30000)
+    content = models.TextField('содержание', max_length=100000)
     book = models.ForeignKey(
         'Book', verbose_name='книга', on_delete=models.CASCADE
         )
