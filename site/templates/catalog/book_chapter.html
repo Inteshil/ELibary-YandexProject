@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main_menu %}
+<nav class="navbar sticky-top navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ chapter.book.get_absolute_url }}">
+            <img src="{% static 'catalog/img/book.png' %}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+            <small>{{ chapter.book.name|capfirst  }}</small>
+            <small class="d-flex fs-6 text-secondary">На страницу книги</small>
+          </a>
+          <div class="navbar-brand" href="{{ chapter.book.get_absolute_url }}">
+            {% if neighboring_chapters.previous %}
+            <a class="text-decoration-none" href="{{ neighboring_chapters.previous.get_absolute_url }}">
+                <img src="{% static 'catalog/img/previous.png' %}" alt="" width="24" height="24" class="d-inline-block me-3">
+            </a>
+            {% endif %}
+            <small>Глава: {{ chapter.name|capfirst  }}</small>
+            {% if neighboring_chapters.next %}
+            <a class="text-decoration-none" href="{{ neighboring_chapters.next.get_absolute_url }}">
+                <img src="{% static 'catalog/img/next.png' %}" alt="" width="24" height="24" class="d-inline-block ms-3">
+            </a>
+            {% endif %}
+          </div>
+    </div>
+    </nav>
+{% endblock main_menu %}
+
+
+{% block content %}
+<div class="row mt-5">
+    {{ chapter.content|safe }}
+</div>
+
+<div class="row my-5">
+    {% if neighboring_chapters.previous %}
+    <div class="col">
+        <a class="btn btn-danger btn-lg d-block" href="{{ neighboring_chapters.previous.get_absolute_url }}">Предыдущая глава</a>
+    </div>
+    {% endif %}
+    {% if neighboring_chapters.next %}
+    <div class="col">
+        <a class="btn btn-danger btn-lg d-block" href="{{ neighboring_chapters.next.get_absolute_url }}">Следующая глава</a>
+    </div>
+    {% else %}
+    <div class="col">
+        <a class="btn btn-danger btn-lg d-block" href="{{ chapter.book.get_absolute_url }}">К оглавлению</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
