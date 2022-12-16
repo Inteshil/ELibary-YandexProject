@@ -74,6 +74,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
 
+    def __str__(self):
+        return self.username
+
     def clean(self):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)

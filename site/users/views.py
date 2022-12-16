@@ -86,7 +86,7 @@ class ResetPasswordView(AuthViews.PasswordResetView):
         result = super().form_valid(form)
         messages.add_message(
             self.request, messages.INFO,
-            render_to_string('Users/messages/reset_password.html'),
+            render_to_string('users/messages/reset_password.html'),
             extra_tags='alert-primary'
             )
         return result
@@ -106,7 +106,7 @@ class PasswordResetConfirmView(AuthViews.PasswordResetConfirmView):
         result = super().form_valid(form)
         messages.add_message(
             self.request, messages.SUCCESS,
-            render_to_string('Users/messages/password_reset_done.html'),
+            render_to_string('users/messages/password_reset_done.html'),
             extra_tags='alert-success'
             )
         return result

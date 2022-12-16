@@ -8,13 +8,13 @@
     background-size: 50px 50px;
 }*/
 .star {
-    height: 50px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
     background-image: url({% static 'img/star3.svg' %});
-    background-size: 50px 50px;
+    background-size: 40px 40px;
     display: inline-block;
 }
-.active {
+.active_star {
     background-image: url({% static 'img/star2.svg' %});
 }
 .star:hover {
@@ -32,10 +32,10 @@
 </style>
 
 {% if book_rating_num > 0 %}
-<h3>Оценка: {{ book_rating_avg }}</h3>
-<h3>Количество оценок: {{ book_rating_num }}</h3>
+<h4>Оценка: {{ book_rating_avg }}</h3>
+<h4>Оценивших: {{ book_rating_num }}</h3>
 {% else %}
-<h3>Похоже эту книгу еще никто не оценил...</h3>
+<h4>Похоже эту книгу еще никто не оценил...</h3>
 {% endif %}
 {% if request.user.is_authenticated %}
 <form method="POST" enctype="multipart/form-data">
@@ -43,12 +43,11 @@
     {% for idx in '01234'|make_list %}
     <button class="no_decoration" type="submit" name='rate' value='{{ idx|add:"1" }}'>
         {% if user_rating > idx|add:"0" %}
-            <div class="star active"></div>
+            <div class="star active_star"></div>
         {% else %}
             <div class="star"></div>
         {% endif %}
     </button>
     {% endfor %}
 </form>
-<h3>Ваша оценка: {{ user_rating }}</h3>
 {% endif %}

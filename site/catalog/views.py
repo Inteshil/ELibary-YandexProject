@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from catalog.models import Book
 from rating.models import BookRating
+from catalog.models import BookChapter
 
 
 class CatalogView(ListView):
@@ -19,7 +20,7 @@ class CatalogView(ListView):
 class BookDetailView(DetailView):
     template_name = 'catalog/book_detail.html'
     queryset = Book.objects.enabled()
-    pk_url_kwarg = 'pk'
+    pk_url_kwarg = 'book_id'
     context_object_name = 'book'
     extra_context = {
         'title_name': 'Детали книги'
@@ -54,12 +55,12 @@ class BookDetailView(DetailView):
             except:
                 return
             rating = BookRating.objects.get_rating_of_user(
-                self.kwargs['pk'], self.request.user
+                self.kwargs['book_id'], self.request.user
             )
             self.object = self.get_object()
             if rating is None:
                 self.object = BookRating()
-                self.object.book_id = self.kwargs['pk']
+                self.object.book_id = self.kwargs['book_id']
                 self.object.user_id = self.request.user.id
                 self.object.rating = rate
                 self.object.save()
@@ -67,4 +68,23 @@ class BookDetailView(DetailView):
                 rating.rating = rate
                 rating.save()
         sub()
-        return HttpResponseRedirect(reverse('catalog:book_detail', kwargs={'pk': kwargs['pk']}))
+        return HttpResponseRedirect(reverse('catalog:book_detail', kwargs={'book_id': kwargs['book_id']}))
+
+
+class BookChapterView(DetailView):
+    template_name = 'catalog/book_chapter.html'
+    queryset = BookChapter.objects.published()
+    pk_url_kwarg = 'chapter_id'
+    context_object_name = 'chapter'
+
+    def get_object(self):
+        return super().get_object(
+            self.queryset.filter(book_id=self.kwargs['book_id'])
+            )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['neighboring_chapters'] = (
+            self.object.get_neighboring_chapters()
+            )
+        return context

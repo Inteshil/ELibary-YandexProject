@@ -27,6 +27,7 @@ DJANGO_APPS = [
 MODULE_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'debug_toolbar',
+    'django_summernote',
 ]
 LOCAL_APPS = [
     'static_pages.apps.StaticPagesConfig',
@@ -116,3 +117,18 @@ OWNER_EMAIL = env.str('OWNER_EMAIL', default='default@gmail.com')
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = reverse_lazy('users:login')
 LOGIN_REDIRECT_URL = reverse_lazy('static_pages:home')
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SUMMERNOTE_CONFIG = {
+    'attachment_upload_to': 'uploads/%Y/%m',
+    'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['table', 'link', 'picture']],
+            ['actions', ['undo', 'redo']],
+            ['view', ['fullscreen', 'help']],
+        ],
+    }
