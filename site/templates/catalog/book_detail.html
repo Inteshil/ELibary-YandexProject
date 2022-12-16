@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 
 
 {% block content %}
 
-{% with chapters=book.chapters.published_list %}
 <div class="row">
     <div class="col-3">
         <img class="img-thumbnail border" src="{{ book.preview.url }}" alt="картинка">
         <div class="my-3">
             {% if chapters %}
-            <a class="btn btn-danger btn-lg d-block" href="{{ chapters.0.get_absolute_url }}">Начать читать</a>
+            <a class="btn btn-danger btn-lg d-block my-1" href="{{ chapters.0.get_absolute_url }}">Начать читать</a>
             {% endif %}
         </div>
         <div class="bg-white p-4">
@@ -35,41 +35,80 @@
 
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Информация</button>
+                <button class="nav-link active" id="main-tab" data-bs-toggle="pill" data-bs-target="#main" type="button" role="tab" aria-controls="main" aria-selected="true">Информация</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Главы</button>
+                <button class="nav-link" id="chapters-tab" data-bs-toggle="pill" data-bs-target="#chapters" type="button" role="tab" aria-controls="chapters" aria-selected="false">Главы</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Отзывы</button>
+                <button class="nav-link" id="ratings-tab" data-bs-toggle="pill" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Отзывы</button>
             </li>
+            {% if book.author == request.user %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Уголок автора</button>
+            </li>
+            {% endif %}
         </ul>
 
         <div class="tab-content container" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="main-tab">
                 <p>{{ book.description }}</p>
                 {% for tag in book.tags.all %}
                 <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
                 {% endfor %}
             </div>
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
+                {% if book.author == request.user %}
+                <a class="btn btn-outline-success btn-lg my-3" href="{% url 'catalog:create_chapter' book.pk %}">Добавить главу</a>
+                {% endif %}
+                
                 <ul class="list-group">
                     {% for chapter in chapters %}
                     <li class="list-group-item">
-                        <a class="text-decoration-none link-secondary" href="{{ chapter.get_absolute_url }}">Глава {{ forloop.counter }}. {{ chapter.name|capfirst }}</a>
+                        <div class="d-flex bd-highlight">
+                            <div class="d-flex flex-fill">
+                                <a class="text-decoration-none link-secondary" href="{{ chapter.get_absolute_url }}">
+                                    Глава {{ forloop.counter }}. {{ chapter.name|capfirst }}
+                                </a>
+                            </div>
+
+                            {% if book.author == request.user %}
+                            <div>
+                                <a class="text-decoration-none px-2" href="{% url 'catalog:update_chapter' book.pk chapter.pk %}">
+                                    <img src="{% static 'catalog/img/edit.png' %}" alt="Изменить" width-"20px" height="20px">
+                                </a>
+                                <a class="text-decoration-none px-2" href="{% url 'catalog:delete_chapter' book.pk chapter.pk %}">
+                                    <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
+                                </a>
+                            </div>
+                            {% endif %}
+
+                        </div>
                     </li>
                     {% empty %}
                     <h3 class="text-muted">Автор не добавил ни одной главы</h3>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+            <div class="tab-pane fade" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
                 Отзывы
             </div>
+            {% if book.author == request.user %}
+            <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                {% if book.is_blocked %}
+                <h3 class="text-muted">Ваша книга была заблокирована по решению администрации</h3>
+                {% endif %}
+                <div class="mt-3">
+                    <h3 class="text-muted">Основное</h3>
+                    <a class="btn btn-outline-info btn-lg my-1" href="{% url 'catalog:update_book' book.pk %}">Настройки</a>
+                    <br>
+                    <a class="btn btn-outline-danger btn-lg my-1" href="{% url 'catalog:delete_book' book.pk %}">Удалить книгу</a>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
     </div>
 </div>
-{% endwith %}
 
 {% endblock content %}

@@ -30,6 +30,7 @@ main_menu = [
         MenuElem('О проекте', 'static_pages:about'),
     )),
     MenuElem('Каталог', 'catalog:list'),
+    MenuElem('Авторство', 'catalog:author_list', can_see=[UserGroup.Auth]),
     MenuElem('Аккаунт', can_see=[UserGroup.Auth], sub_elems=(
         MenuElem('Профиль', 'users:profile'),
         MenuElem('Выйти', 'users:logout'),
