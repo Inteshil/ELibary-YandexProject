@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView
 from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden
 from django.urls import reverse
 
 from catalog.models import Book
