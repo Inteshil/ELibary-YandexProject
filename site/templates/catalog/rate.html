@@ -1,53 +1,7 @@
 {% load static %}
 
-<style>
-/*.star {
-    height: 50px;
-    width: calc(50px * {{ book_rating_avg }});
-    background-image: url({% static 'img/star.svg' %});
-    background-size: 50px 50px;
-}*/
-.star {
-    height: 40px;
-    width: 40px;
-    background-image: url({% static 'img/star3.svg' %});
-    background-size: 40px 40px;
-    display: inline-block;
-}
-.active_star {
-    background-image: url({% static 'img/star2.svg' %});
-}
-.star:hover {
-    background-image: url({% static 'img/star.svg' %});
-}
-.no_decoration {
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
-}
-</style>
-
 {% if book_rating_num > 0 %}
-<h4>Оценка: {{ book_rating_avg }}</h3>
-<h4>Оценивших: {{ book_rating_num }}</h3>
+<h4>{{ book_rating_avg }} x {{ book_rating_num }}</h3>
 {% else %}
 <h4>Похоже эту книгу еще никто не оценил...</h3>
-{% endif %}
-{% if request.user.is_authenticated %}
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %} 
-    {% for idx in '01234'|make_list %}
-    <button class="no_decoration" type="submit" name='rate' value='{{ idx|add:"1" }}'>
-        {% if user_rating > idx|add:"0" %}
-            <div class="star active_star"></div>
-        {% else %}
-            <div class="star"></div>
-        {% endif %}
-    </button>
-    {% endfor %}
-</form>
 {% endif %}

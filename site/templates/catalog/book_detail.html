@@ -53,6 +53,20 @@
 
         <div class="tab-content container" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                {% if request.user.is_authenticated %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %} 
+                    {% for idx in '01234'|make_list %}
+                    <button class="no_decoration" type="submit" name='rate' value='{{ idx|add:"1" }}'>
+                        {% if user_rating > idx|add:"0" %}
+                            <div class="star active_star"></div>
+                        {% else %}
+                            <div class="star"></div>
+                        {% endif %}
+                    </button>
+                    {% endfor %}
+                </form>
+                {% endif %}
                 <p>{{ book.description }}</p>
                 {% for tag in book.tags.all %}
                 <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
