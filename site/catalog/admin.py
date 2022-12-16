@@ -43,6 +43,15 @@ class BookChapterAdmin(SummernoteModelAdmin):
     summernote_fields = ('content',)
 
 
+@admin.register(BookChapter)
+class BookChapterAdmin(SummernoteModelAdmin):
+    fields = ('name', 'number', 'is_published', 'content', 'book')
+    list_display = ('name', 'book', 'number', 'is_published')
+    list_editable = ('is_published',)
+    ordering = ('number',)
+    summernote_fields = ('content',)
+
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     fields = ('name',)
