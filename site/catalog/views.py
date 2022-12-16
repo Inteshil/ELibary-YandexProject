@@ -4,6 +4,7 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls.base import reverse_lazy, reverse
 from django.contrib import messages
+from django.http import Http404
 
 from catalog.models import Book, BookChapter
 from catalog.forms import BookForm, ChapterForm
@@ -111,9 +112,17 @@ class BookChapterView(DetailView):
     }
 
     def get_object(self):
-        return super().get_object(
-            self.get_queryset().filter(book_id=self.kwargs['book_id'])
+        queryset = BookChapter.objects.for_user(
+            self.request.user, self.kwargs.get('book_id')
             )
+        current, self.neighboring_chapters = (
+            BookChapter.objects.get_neighboring_chapters(
+                queryset, self.kwargs.get('chapter_id')
+                )
+            )
+        if current is None:
+            raise Http404('Глава не найдена')
+        return current
 
     def get_queryset(self):
         return BookChapter.objects.for_user(
@@ -122,9 +131,7 @@ class BookChapterView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['neighboring_chapters'] = (
-            self.object.get_neighboring_chapters(self.request.user)
-            )
+        context['neighboring_chapters'] = self.neighboring_chapters
         return context
 
 

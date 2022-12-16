@@ -77,17 +77,6 @@ class BookChapter(models.Model):
             kwargs={'book_id': self.book.pk, 'chapter_id': self.pk}
             )
 
-    def get_neighboring_chapters(self, user):
-        previous = (
-            BookChapter.objects.for_user(user, self.book)
-            .filter(number__lt=self.number).last()
-            )
-        next = (
-            BookChapter.objects.for_user(user, self.book)
-            .filter(number__gt=self.number).first()
-            )
-        return {'previous': previous, 'next': next}
-
 
 class Tag(models.Model):
     name = models.CharField('название', max_length=50)

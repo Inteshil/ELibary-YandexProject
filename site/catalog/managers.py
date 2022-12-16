@@ -46,3 +46,16 @@ class BookChapterManager(models.Manager):
 
     def get_max_number(self):
         return self.aggregate(number=models.Max('number'))['number'] + 1
+
+    def get_neighboring_chapters(self, queryset, chapter_id):
+        previous = current = next = None
+        for idx in range(len(queryset)):
+            current_chapter = queryset[idx]
+            if current_chapter.pk == chapter_id:
+                current = current_chapter
+                if idx != 0:
+                    previous = queryset[idx - 1]
+                if idx != len(queryset) - 1:
+                    next = queryset[idx + 1]
+                break
+        return current, {'previous': previous, 'next': next}
