@@ -28,8 +28,10 @@ class Book(models.Model):
     creation_data = models.DateField(
         'дата создания', auto_created=True, auto_now_add=True
         )
-    tags = models.ManyToManyField('Tag')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    tags = models.ManyToManyField('Tag', verbose_name='теги', blank=True)
+    author = models.ForeignKey(
+        User, verbose_name='автор', on_delete=models.CASCADE
+        )
 
     objects = BookManager()
 
@@ -60,6 +62,11 @@ class BookChapter(models.Model):
         verbose_name = 'глава'
         verbose_name_plural = 'главы'
         default_related_name = 'chapters'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['book', 'number'], name='chapter_number_unique'
+                )
+        ]
 
     def __str__(self):
         return self.name
@@ -69,15 +76,6 @@ class BookChapter(models.Model):
             'catalog:book_chapter',
             kwargs={'book_id': self.book.pk, 'chapter_id': self.pk}
             )
-
-    def get_neighboring_chapters(self):
-        previous = BookChapter.objects.published().filter(
-            number__lt=self.number
-            ).last()
-        next = BookChapter.objects.published().filter(
-            number__gt=self.number
-            ).first()
-        return {'previous': previous, 'next': next}
 
 
 class Tag(models.Model):
