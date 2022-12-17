@@ -1,0 +1,8 @@
+{% extends 'catalog/book_list.html' %}
+
+{% block top_of_list %}
+<div class="text-center">
+    <h1>Ваши книги</h1>
+    <a class="btn btn-success btn-lg" href="{% url 'catalog:create_book' %}">Добавить книгу</a>
+</div>
+{% endblock top_of_list %}
