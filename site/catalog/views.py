@@ -147,7 +147,7 @@ class CreateChapterView(AuthorRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.book = self.book
-        self.object.number = BookChapter.objects.get_max_number()
+        self.object.number = BookChapter.objects.get_max_number(self.book)
         return super().form_valid(form)
 
 

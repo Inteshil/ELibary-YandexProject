@@ -28,7 +28,7 @@ class Book(models.Model):
     creation_data = models.DateField(
         'дата создания', auto_created=True, auto_now_add=True
         )
-    tags = models.ManyToManyField('Tag', verbose_name='теги')
+    tags = models.ManyToManyField('Tag', verbose_name='теги', blank=True)
     author = models.ForeignKey(
         User, verbose_name='автор', on_delete=models.CASCADE
         )

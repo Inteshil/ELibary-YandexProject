@@ -44,8 +44,12 @@ class BookChapterManager(models.Manager):
             return published_qs | author_qs
         return published_qs
 
-    def get_max_number(self):
-        return self.aggregate(number=models.Max('number'))['number'] + 1
+    def get_max_number(self, book):
+        qs = self.filter(book=book)
+        max_number = qs.aggregate(number=models.Max('number'))['number']
+        if max_number:
+            return max_number + 1
+        return 1
 
     def get_neighboring_chapters(self, queryset, chapter_id):
         previous = current = next = None
