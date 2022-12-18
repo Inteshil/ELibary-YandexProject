@@ -9,7 +9,7 @@ from django.views.generic import (
     )
 
 from catalog.forms import BookForm, ChapterForm
-from catalog.models import Book, BookChapter
+from catalog.models import Book, BookChapter, BookComment
 from catalog.utils import AuthorRequiredMixin
 from rating.models import BookRating
 
