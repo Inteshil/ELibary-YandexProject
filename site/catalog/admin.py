@@ -33,6 +33,13 @@ class BookAdmin(admin.ModelAdmin):
         fields = ('name', 'number', 'is_published')
     inlines = (BookChapterInline, )
 
+    class BookChapterInline(admin.TabularInline):
+        model = BookChapter
+        extra = 0
+        show_change_link = True
+        fields = ('name', 'number', 'is_published')
+    inlines = (BookChapterInline, )
+
 
 @admin.register(BookChapter)
 class BookChapterAdmin(SummernoteModelAdmin):
