@@ -1,0 +1,39 @@
+{% with form=filter.form %}
+<form action="" method="GET">
+    <div class="row">
+
+        <div class="col my-5">
+            {% for field in filter.form %}
+            {% if field.name != 'tags' %}
+            <div class="input-group my-1">
+                {% if field.label %}
+                <span class="input-group-text">{{ field.label }}</span>
+                {% endif %}
+                {{ field }}
+            </div>
+
+            <div>
+                {% for error in field.errors %}
+                <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            <button class="btn btn-primary my-1" type="submit">Поиск</button>
+            <a href="{% url request.resolver_match.view_name %}" class="btn btn-secondary my-1" type="submit">Очистить</a>
+        </div>
+
+        <div class="col">
+            {% with field=filter.form.tags  %}
+            <div class="input-group my-1">
+                {% if field.label %}
+                <span class="input-group-text">{{ field.label }}</span>
+                {% endif %}
+                {{ field }}
+            </div>
+            {% endwith %}
+        </div>
+
+    </div>
+</form>
+{% endwith %}

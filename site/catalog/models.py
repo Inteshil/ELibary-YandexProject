@@ -5,16 +5,13 @@ from users.models import User
 from catalog.managers import BookManager, BookChapterManager
 
 
-AGE_RATING_CHOICES = (
-    ('0+', '0+'),
-    ('6+', '6+'),
-    ('12+', '12+'),
-    ('16+', '16+'),
-    ('18+', '18+'),
-)
-
-
 class Book(models.Model):
+    AGE_RATING_CHOICES = (
+        ('нет', 'Отсутствует'),
+        ('16+', '16+'),
+        ('18+', '18+'),
+    )
+
     name = models.CharField('название', max_length=100)
     preview = models.ImageField('превью', upload_to='previews/%Y/%m')
     is_published = models.BooleanField('опубликовано', default=True)
@@ -23,9 +20,9 @@ class Book(models.Model):
         'описание', max_length=3000, default='Без описания'
         )
     age_rating = models.TextField(
-        'возрастной рейтинг', choices=AGE_RATING_CHOICES, null=True, blank=True
+        'возрастной рейтинг', choices=AGE_RATING_CHOICES, default='нет'
         )
-    creation_data = models.DateField(
+    creation_date = models.DateField(
         'дата создания', auto_created=True, auto_now_add=True
         )
     tags = models.ManyToManyField('Tag', verbose_name='теги', blank=True)

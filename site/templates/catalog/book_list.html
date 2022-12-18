@@ -1,21 +1,31 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extrahead %}
+{{ filter.form.media }}
+{% endblock extrahead %}
+
 
 {% block content %}
 
 {% block top_of_list %}
 {% endblock top_of_list %}
+  <button class="btn btn-outline-dark mx-auto btn-lg" type="button" data-bs-toggle="collapse" data-bs-target="#FilterBlock" aria-expanded="true" aria-controls="FilterBlock">
+    <img src="{% static 'catalog/img/filter.png' %}" alt="" width="30px" height="30px">
+    Фильтры
+  </button>
+  <div class={% if should_open_filter %}"show"{% else %}"collapse"{% endif %} id="FilterBlock">
+      {% include 'catalog/filter.html' %}
+  </div>
 
 <div class="album py-5">
-  <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for book in books %}
         {% include 'catalog/book_card.html' %}
       {% empty %}
       <h2>Мы не нашли ни одной книги :[</h2>
       {% endfor %}
-
     </div>
-  </div>
 </div>
 
 {% endblock content %}

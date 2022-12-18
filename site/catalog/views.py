@@ -1,23 +1,32 @@
 from django.views.generic import (
-    ListView, DetailView, CreateView, UpdateView, DeleteView
+    DetailView, CreateView, UpdateView, DeleteView
     )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls.base import reverse_lazy, reverse
 from django.contrib import messages
 from django.http import Http404
 
+from django_filters.views import FilterView
+
 from catalog.models import Book, BookChapter
 from catalog.forms import BookForm, ChapterForm
 from catalog.utils import AuthorRequiredMixin
+from catalog.filters import BookFilter
 
 
-class CatalogView(ListView):
+class CatalogView(FilterView):
     template_name = 'catalog/book_list.html'
     queryset = Book.objects.enabled()
+    filterset_class = BookFilter
+    context_object_name = 'books'
     extra_context = {
         'page_title': 'Каталог'
     }
-    context_object_name = 'books'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['should_open_filter'] = len(self.request.GET) != 0
+        return context
 
 
 class AuthorCatalogView(LoginRequiredMixin, CatalogView):
