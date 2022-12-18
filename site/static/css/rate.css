@@ -1,0 +1,22 @@
+.star {
+    height: 40px;
+    width: 40px;
+    background-image: url('../img/star3.svg');
+    background-size: 40px 40px;
+    display: inline-block;
+}
+.active_star {
+    background-image: url('../img/star2.svg');
+}
+.star:hover {
+    background-image: url('../img/star.svg');
+}
+.no_decoration {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
