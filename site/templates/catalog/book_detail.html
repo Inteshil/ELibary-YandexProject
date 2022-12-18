@@ -46,13 +46,13 @@
 
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="main-tab" data-bs-toggle="pill" data-bs-target="#main" type="button" role="tab" aria-controls="main" aria-selected="true">Информация</button>
+                <button class="nav-link {% if main_active %}active{% endif %}" id="main-tab" data-bs-toggle="pill" data-bs-target="#main" type="button" role="tab" aria-controls="main" aria-selected="true">Информация</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="chapters-tab" data-bs-toggle="pill" data-bs-target="#chapters" type="button" role="tab" aria-controls="chapters" aria-selected="false">Главы</button>
+                <button class="nav-link {% if chapters_active %}active{% endif %}" id="chapters-tab" data-bs-toggle="pill" data-bs-target="#chapters" type="button" role="tab" aria-controls="chapters" aria-selected="false">Главы</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="ratings-tab" data-bs-toggle="pill" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Отзывы</button>
+                <button class="nav-link {% if ratings_active %}active{% endif %}" id="ratings-tab" data-bs-toggle="pill" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Отзывы</button>
             </li>
             {% if book.author == request.user %}
             <li class="nav-item" role="presentation">
@@ -62,7 +62,7 @@
         </ul>
 
         <div class="tab-content container" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="main-tab">
+            <div class="tab-pane fade {% if main_active %}show active{% endif %}" id="main" role="tabpanel" aria-labelledby="main-tab">
                 {% if request.user.is_authenticated %}
                 {% if book.author == request.user %}
                 <h3>тут будет оценка у юзера</h3>
@@ -81,12 +81,13 @@
                 </form>
                 {% endif %}
                 {% endif %}
+
                 <p>{{ book.description }}</p>
                 {% for tag in book.tags.all %}
                 <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
                 {% endfor %}
             </div>
-            <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
+            <div class="tab-pane fade {% if chapters_active %}show active{% endif %}" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
                 {% if book.author == request.user %}
                 <a class="btn btn-outline-success btn-lg my-3" href="{% url 'catalog:create_chapter' book.pk %}">Добавить главу</a>
                 {% endif %}
@@ -119,8 +120,49 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="tab-pane fade" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
-                Отзывы
+            <div class="tab-pane fade {% if ratings_active %}show active{% endif %}" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
+                <ul class="list-group">
+                    {% for comment in comments %}
+                        <li class="list-group-item border border-3">
+                            <div class="d-flex bd-highlight">
+                                <div class="post">
+                                    <div class="d-flex align-items-center mb-4 author-info">
+                                        <h4 class="d-flex align-items-center text-decoration-none m-0 title-text">
+                                            Автор:&nbsp<a class="text-decoration-none link-dark fw-normal" href="{% url 'users:user_details' comment.user.id %}">{{ comment.user}}</a></h4>
+                                        
+                                        <span class="d-flex align-bottom fw-light text-muted mt-2 ms-2">{{ comment.creation_datetime }}</span>
+                                    </div>
+                                    <p class="text-decoration-none fw-light">{{ comment.text|safe }}</p>
+                                </div>
+
+                            </div>
+                        </li>
+                    {% empty %}
+                    <h3 class="text-muted">Пока никто не написал отзыв. Вы можете быть первым!</h3>
+                    {% endfor %}
+                </ul>
+                
+                
+                <div class="d-flex justify-content-md-between mt-2">
+                    <div class="nav nav-pills d-flex justify-content-left mt-2">
+                        {% if comments.has_previous %}
+                            <a href="?comment=1"><button class="nav-link active" type="button">&laquo; начало</button></a>
+                            <a href="?comment={{ comments.previous_page_number }}"><button class="nav-link active mx-2" type="button">предыдущая странциа</button></a>
+                        {% endif %}
+                    </div>
+                
+                    <p class="align-self-center mt-3">
+                        Страница {{ comments.number }} из {{ comments.paginator.num_pages }}.
+                    </p>
+
+                    <div class="nav nav-pills d-flex justify-content-rigth mt-2">
+                        {% if comments.has_next %}
+                            <a href="?comment={{ comments.next_page_number }}"><button class="nav-link active" type="button">следующая страница</button></a>
+                            <a href="?comment={{ comments.paginator.num_pages }}"><button class="nav-link active mx-2" type="button">конец &raquo;</button></a>
+                        {% endif %}
+                    <div>
+                </div>
+                
             </div>
             {% if book.author == request.user %}
             <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">

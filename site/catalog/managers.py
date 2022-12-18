@@ -63,3 +63,12 @@ class BookChapterManager(models.Manager):
                     next = queryset[idx + 1]
                 break
         return current, {'previous': previous, 'next': next}
+
+
+class CommentManager(models.Manager):
+    def get_comments_for_book(self, book):
+        return (
+            super().get_queryset()
+            .filter(book=book)
+            .order_by('creation_datetime')
+            )
