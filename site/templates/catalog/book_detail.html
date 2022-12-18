@@ -18,7 +18,11 @@
         <div class="bg-white p-4">
             <div class="py-1">
                 <h5 class="text-muted">Оценка</h5>
-                {% include './rate.html' %}
+                {% if book_rating_num > 0 %}
+                <h4>{{ book_rating_avg }} x {{ book_rating_num }}</h3>
+                {% else %}
+                <h4>Похоже эту книгу еще никто не оценил...</h3>
+                {% endif %}
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Автор</h5>
@@ -60,6 +64,9 @@
         <div class="tab-content container" id="pills-tabContent">
             <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="main-tab">
                 {% if request.user.is_authenticated %}
+                {% if book.author == request.user %}
+                <h3>тут будет оценка у юзера</h3>
+                {% else %}
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %} 
                     {% for idx in '01234'|make_list %}
@@ -72,6 +79,7 @@
                     </button>
                     {% endfor %}
                 </form>
+                {% endif %}
                 {% endif %}
                 <p>{{ book.description }}</p>
                 {% for tag in book.tags.all %}

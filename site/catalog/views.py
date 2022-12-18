@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls.base import reverse_lazy, reverse
 from django.contrib import messages
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from catalog.models import Book
 from rating.models import BookRating
@@ -65,7 +66,11 @@ class BookDetailView(DetailView):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
+        book = get_object_or_404(Book, pk=self.kwargs['book_id'])
+
         def sub():
+            if request.user == book.author:
+                return
             if not 'rate' in request.POST:
                 return
             try:
