@@ -1,9 +1,6 @@
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
-<<<<<<< HEAD
 from django.urls import reverse_lazy
-=======
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
 
 from django_summernote.widgets import SummernoteWidget
 
@@ -21,11 +18,7 @@ class BookForm(forms.ModelForm, FormStyleMixin):
 
         widgets = {
             'preview': forms.FileInput(),
-<<<<<<< HEAD
             'tags': FilteredSelectMultiple('теги', False)
-=======
-            'tags': FilteredSelectMultiple('теги', True)
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
         }
         labels = {
             'preview': 'Изменить превью',
@@ -34,11 +27,7 @@ class BookForm(forms.ModelForm, FormStyleMixin):
 
     class Media:
         css = {'all': ['admin/css/widgets.css']}
-<<<<<<< HEAD
         js = [reverse_lazy('javascript-catalog')]
-=======
-        js = ['/admin/jsi18n/']
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
 
 
 class ChapterForm(forms.ModelForm, FormStyleMixin):

@@ -1,27 +1,17 @@
 from django.views.generic import (
-<<<<<<< HEAD
     DetailView, CreateView, UpdateView, DeleteView
-=======
-    ListView, DetailView, CreateView, UpdateView, DeleteView
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
     )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls.base import reverse_lazy, reverse
 from django.contrib import messages
 from django.http import Http404
-<<<<<<< HEAD
 
 from django_filters.views import FilterView
-=======
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
 
 from catalog.models import Book, BookChapter
 from catalog.forms import BookForm, ChapterForm
 from catalog.utils import AuthorRequiredMixin
-<<<<<<< HEAD
 from catalog.filters import BookFilter
-=======
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
 
 
 class CatalogView(FilterView):
@@ -107,32 +97,6 @@ class UpdateBookView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Book.objects.filter(author=self.request.user)
-<<<<<<< HEAD
-=======
-
-
-class DeleteBookView(LoginRequiredMixin, DeleteView):
-    template_name = 'catalog/confirm.html'
-    pk_url_kwarg = 'book_id'
-    success_url = reverse_lazy('catalog:author_list')
-    extra_context = {
-        'page_title': 'Удалить книгу',
-        'confirm_title': 'Вы уверены, что хотите удалить книгу?',
-        'confirm_message': 'Это действие является необратимым!',
-    }
-
-    def get_queryset(self):
-        return Book.objects.filter(author=self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        messages.add_message(
-            self.request, messages.INFO,
-            'Вы <strong>успешно</strong> удалили книгу',
-            extra_tags='alert-info',
-            )
-        return super().post(request, *args, **kwargs)
-
->>>>>>> 711c3059c99620d7e0d12ed1ba23300ef4ed302f
 
 # BookChapter CRUD
 
