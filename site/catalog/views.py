@@ -1,13 +1,14 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger
+from django.http import Http404
+from django.urls.base import reverse_lazy, reverse
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
     )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls.base import reverse_lazy, reverse
-from django.contrib import messages
-from django.http import Http404
 
-from catalog.models import Book, BookChapter
 from catalog.forms import BookForm, ChapterForm
+from catalog.models import Book, BookChapter, BookComment
 from catalog.utils import AuthorRequiredMixin
 
 
@@ -46,6 +47,20 @@ class BookDetailView(DetailView):
         context['chapters'] = BookChapter.objects.for_user(
             self.request.user, self.kwargs['book_id']
             )
+        context['main_active'] = False
+        context['chapters_active'] = False
+        context['ratings_active'] = False
+        comments_paginator = Paginator(BookComment.objects.get_comments_for_book(self.kwargs['book_id']), 2)
+        comments_number = self.request.GET.get('comment')
+        print(comments_number)
+        try:
+            context['comments'] = comments_paginator.page(comments_number)
+            context['ratings_active'] = True
+        except PageNotAnInteger:
+            print('errr')
+            context['comments'] = comments_paginator.page(1)
+            context['main_active'] = True
+        print(context['ratings_active'])
         return context
 
 
