@@ -93,6 +93,10 @@ class BookFilter(filters.FilterSet):
         label='Название', lookup_expr='icontains',
         widget=forms.TextInput(attrs={'placeholder': 'Поиск по названию'})
         )
+    author__username = filters.CharFilter(
+        label='Имя автора', lookup_expr='icontains',
+        widget=forms.TextInput(attrs={'placeholder': 'Поиск по имени автора'})
+        )
     order = filters.OrderingFilter(
         label='Сортировать по', empty_label='Умолчанию',
         method='filter_order',
@@ -122,8 +126,8 @@ class BookFilter(filters.FilterSet):
         model = Book
         form = BookFilterForm
         fields = (
-            'name', 'order', 'age_rating', 'creation_date', 'chapter_quantity',
-            'tags'
+            'name', 'author__username', 'order', 'age_rating', 'creation_date',
+            'chapter_quantity', 'tags'
             )
 
     def filter_creation_date(self, queryset, name, value):

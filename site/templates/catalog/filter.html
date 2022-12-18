@@ -19,8 +19,6 @@
             </div>
             {% endif %}
             {% endfor %}
-            <button class="btn btn-primary my-1" type="submit">Поиск</button>
-            <a href="{% url request.resolver_match.view_name %}" class="btn btn-secondary my-1" type="submit">Очистить</a>
         </div>
 
         <div class="col">
@@ -33,7 +31,10 @@
             </div>
             {% endwith %}
         </div>
-
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary btn-lg my-1" type="submit">Поиск</button>
+        <a href="{% url request.resolver_match.view_name %}" class="btn btn-secondary btn-lg my-1" type="submit">Очистить</a>
     </div>
 </form>
 {% endwith %}

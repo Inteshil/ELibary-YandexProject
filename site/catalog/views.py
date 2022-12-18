@@ -40,17 +40,6 @@ class AuthorCatalogView(LoginRequiredMixin, CatalogView):
 
 # Book CRUD
 
-class AuthorCatalogView(LoginRequiredMixin, CatalogView):
-    ''' Список книг автора '''
-
-    template_name = 'catalog/author_book_list.html'
-
-    def get_queryset(self):
-        return Book.objects.get_queryset().filter(author=self.request.user)
-
-
-# Book CRUD
-
 class BookDetailView(DetailView):
     template_name = 'catalog/book_detail.html'
     pk_url_kwarg = 'book_id'
@@ -98,7 +87,6 @@ class UpdateBookView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         return Book.objects.filter(author=self.request.user)
 
-# BookChapter CRUD
 
 class DeleteBookView(LoginRequiredMixin, DeleteView):
     template_name = 'catalog/confirm.html'
