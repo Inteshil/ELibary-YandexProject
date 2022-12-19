@@ -1,8 +1,10 @@
 {% extends 'catalog/book_list.html' %}
+{% load static %}
 
 {% block top_of_list %}
-<div class="text-center">
-    <h1>Ваши книги</h1>
-    <a class="btn btn-success btn-lg" href="{% url 'catalog:create_book' %}">Добавить книгу</a>
-</div>
+<h1>Ваши книги</h1>
+<a class="btn btn-outline-success btn-lg" href="{% url 'catalog:create_book' %}">
+    <img src="{% static 'catalog/img/add.png' %}" alt="" width="30" height="30">
+    Добавить книгу
+</a>
 {% endblock top_of_list %}

@@ -14,7 +14,7 @@ RATING_CHOICES = (
 
 class BookRatingManager(models.Manager):
     def get_rating_of_book(self, book):
-        return (
+        result = (
             self.get_queryset()
             .filter(book=book)
             .aggregate(
@@ -22,6 +22,10 @@ class BookRatingManager(models.Manager):
                 book_rating_num=models.Count('user')
                 )
             )
+        if result['book_rating_avg']:
+            result['book_rating_avg'] = round(result['book_rating_avg'], 2)
+        return result
+
     def get_rating_of_user(self, book, user):
         if user.is_authenticated:
             return self.get_queryset().filter(book=book, user=user).first()
