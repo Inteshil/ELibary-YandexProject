@@ -1,32 +1,43 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
-from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.http import Http404, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
-    ListView, DetailView, CreateView, UpdateView, DeleteView
+    DetailView, CreateView, UpdateView, DeleteView
     )
 
-from catalog.forms import BookForm, ChapterForm
+from django_filters.views import FilterView
+
 from catalog.models import Book, BookChapter, BookComment
+from catalog.forms import BookForm, ChapterForm
 from catalog.utils import AuthorRequiredMixin
+from catalog.filters import BookFilter, BaseBookFilter
+
 from rating.models import BookRating
 
 
-class CatalogView(ListView):
+class CatalogView(FilterView):
     template_name = 'catalog/book_list.html'
     queryset = Book.objects.enabled()
+    filterset_class = BookFilter
+    context_object_name = 'books'
     extra_context = {
         'page_title': 'Каталог'
     }
-    context_object_name = 'books'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['should_open_filter'] = len(self.request.GET) != 0
+        return context
 
 
 class AuthorCatalogView(LoginRequiredMixin, CatalogView):
     ''' Список книг автора '''
 
     template_name = 'catalog/author_book_list.html'
+    filterset_class = BaseBookFilter
 
     def get_queryset(self):
         return Book.objects.get_queryset().filter(author=self.request.user)
@@ -45,50 +56,51 @@ class BookDetailView(DetailView):
 
     def get_queryset(self):
         return Book.objects.enabled_for_author(self.request.user)
-  
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['chapters'] = BookChapter.objects.for_user(
+            self.request.user, self.kwargs['book_id']
+            )
+
         book_rating = BookRating.objects.get_rating_of_book(self.object)
         user_rating = BookRating.objects.get_rating_of_user(
             self.object, self.request.user
             )
-        context['main_active'] = False
-        context['chapters_active'] = False
-        context['ratings_active'] = False
-        comments_paginator = Paginator(BookComment.objects.get_comments_for_book(self.kwargs['book_id']), 2)
+
+        context['user_rating'] = None
+        if user_rating:
+            context['user_rating'] = int(user_rating.rating)
+
+        context['active_elem'] = 'main'
+        comments_paginator = Paginator(
+            BookComment.objects.get_comments_for_book(
+                self.kwargs['book_id']
+                ), 2
+            )
         comments_number = self.request.GET.get('comment')
         try:
             context['comments'] = comments_paginator.page(comments_number)
-            context['ratings_active'] = True
+            context['active_elem'] = 'ratings'
         except PageNotAnInteger:
             context['comments'] = comments_paginator.page(1)
-            context['main_active'] = True
-        
-        if user_rating:
-            rate = int(user_rating.rating)
-        else:
-            rate = None
-        return {
-            **context,
-            'book_rating_avg': str(book_rating['book_rating_avg'])[:4],
-            'book_rating_num': book_rating['book_rating_num'],
-            'user_rating': rate
-        }
+
+        return {**context, **book_rating}
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
-        book = get_object_or_404(Book, pk=self.kwargs['book_id'])          
+        book = get_object_or_404(Book, pk=self.kwargs['book_id'])
 
         def sub():
             if request.user == book.author:
                 return
-            if not 'rate' in request.POST:
+            if 'rate' not in request.POST:
                 return
             try:
                 rate = int(request.POST['rate'][0])
-            except:
+            except (ValueError, IndexError, TypeError):
                 return
             rating = BookRating.objects.get_rating_of_user(
                 self.kwargs['book_id'], self.request.user
@@ -104,7 +116,7 @@ class BookDetailView(DetailView):
                 rating.rating = rate
                 rating.save()
         sub()
-        return HttpResponseRedirect(reverse('catalog:book_detail', kwargs={'book_id': kwargs['book_id']}))
+        return redirect('catalog:book_detail', book_id=kwargs['book_id'])
 
 
 class CreateBookView(LoginRequiredMixin, CreateView):
@@ -180,6 +192,7 @@ class BookChapterView(DetailView):
             )
         if current is None:
             raise Http404('Глава не найдена')
+
         return current
 
     def get_queryset(self):

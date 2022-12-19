@@ -70,5 +70,6 @@ class CommentManager(models.Manager):
         return (
             super().get_queryset()
             .filter(book=book)
+            .select_related('user')
             .order_by('creation_datetime')
             )

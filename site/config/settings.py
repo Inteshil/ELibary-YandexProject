@@ -28,6 +28,7 @@ MODULE_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'debug_toolbar',
     'django_summernote',
+    'django_filters',
 ]
 LOCAL_APPS = [
     'static_pages.apps.StaticPagesConfig',

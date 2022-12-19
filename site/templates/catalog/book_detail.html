@@ -19,40 +19,39 @@
             <div class="py-1">
                 <h5 class="text-muted">Оценка</h5>
                 {% if book_rating_num > 0 %}
-                <h4>{{ book_rating_avg }} x {{ book_rating_num }}</h3>
+                <h4 class="d-inline">{{ book_rating_avg }}</h4><h6 class="d-inline text-muted px-2">{{ book_rating_num }}</h6>
                 {% else %}
-                <h4>Похоже эту книгу еще никто не оценил...</h3>
+                <h4>Нет оценок</h4>
                 {% endif %}
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Автор</h5>
-                <h4>{{ book.author }}</h4>
+                <a class="text-decoration-none link-dark" href="{{ book.author.get_absolute_url }}"><h4>{{ book.author.username }}</h4></a>
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Дата создания</h5>
-                <h4>{{ book.creation_data }}</h4>
+                <h4>{{ book.creation_date }}</h4>
             </div>
-            {% if book.age_rating %}
             <div class="py-1">
                 <h5 class="text-muted">Возрастной рейтинг</h5>
-                <h4>{{ book.age_rating }}</h4>
+                <h4>{{ book.get_age_rating_display }}</h4>
             </div>
-            {% endif %}
         </div>
     </div>
+    
     <div class="col-9 bg-white">
         <h1 class="text-center title-text">{{ book.name|capfirst }}</h1>
         <hr>
 
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link {% if main_active %}active{% endif %}" id="main-tab" data-bs-toggle="pill" data-bs-target="#main" type="button" role="tab" aria-controls="main" aria-selected="true">Информация</button>
+                <button class="nav-link {% if active_elem == 'main' %}active{% endif %}" id="main-tab" data-bs-toggle="pill" data-bs-target="#main" type="button" role="tab" aria-controls="main" aria-selected="true">Информация</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link {% if chapters_active %}active{% endif %}" id="chapters-tab" data-bs-toggle="pill" data-bs-target="#chapters" type="button" role="tab" aria-controls="chapters" aria-selected="false">Главы</button>
+                <button class="nav-link {% if active_elem == 'chapters' %}active{% endif %}" id="chapters-tab" data-bs-toggle="pill" data-bs-target="#chapters" type="button" role="tab" aria-controls="chapters" aria-selected="false">Главы</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link {% if ratings_active %}active{% endif %}" id="ratings-tab" data-bs-toggle="pill" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Отзывы</button>
+                <button class="nav-link {% if active_elem == 'ratings' %}active{% endif %}" id="ratings-tab" data-bs-toggle="pill" data-bs-target="#ratings" type="button" role="tab" aria-controls="ratings" aria-selected="false">Отзывы</button>
             </li>
             {% if book.author == request.user %}
             <li class="nav-item" role="presentation">
@@ -62,34 +61,39 @@
         </ul>
 
         <div class="tab-content container" id="pills-tabContent">
-            <div class="tab-pane fade {% if main_active %}show active{% endif %}" id="main" role="tabpanel" aria-labelledby="main-tab">
-                {% if request.user.is_authenticated %}
-                {% if book.author == request.user %}
-                <h3>тут будет оценка у юзера</h3>
-                {% else %}
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %} 
-                    {% for idx in '01234'|make_list %}
-                    <button class="no_decoration" type="submit" name='rate' value='{{ idx|add:"1" }}'>
-                        {% if user_rating > idx|add:"0" %}
-                            <div class="star active_star"></div>
-                        {% else %}
-                            <div class="star"></div>
-                        {% endif %}
-                    </button>
-                    {% endfor %}
-                </form>
-                {% endif %}
-                {% endif %}
-
+            <div class="tab-pane fade {% if active_elem == 'main' %}show active{% endif %}" id="main" role="tabpanel" aria-labelledby="main-tab">
                 <p>{{ book.description }}</p>
                 {% for tag in book.tags.all %}
                 <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
                 {% endfor %}
+
+                <div class="my-5">
+                    {% if request.user.is_authenticated %}
+                    {% if book.author != request.user %}
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %} 
+                        
+                        <h3 class="text-muted">Ваша оценка</h3>
+                        {% for idx in '01234'|make_list %}
+                        <button class="no_decoration" type="submit" name='rate' value='{{ idx|add:"1" }}'>
+                            {% if user_rating > idx|add:"0" %}
+                                <div class="star active_star"></div>
+                            {% else %}
+                                <div class="star"></div>
+                            {% endif %}
+                        </button>
+                        {% endfor %}
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                </div>
             </div>
-            <div class="tab-pane fade {% if chapters_active %}show active{% endif %}" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
+            <div class="tab-pane fade {% if active_elem == 'chapters' %}show active{% endif %}" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
                 {% if book.author == request.user %}
-                <a class="btn btn-outline-success btn-lg my-3" href="{% url 'catalog:create_chapter' book.pk %}">Добавить главу</a>
+                <a class="btn btn-outline-success btn-lg my-3" href="{% url 'catalog:create_chapter' book.pk %}">
+                    <img src="{% static 'catalog/img/add.png' %}" alt="" width="30" height="30">
+                    Добавить главу
+                </a>
                 {% endif %}
                 
                 <ul class="list-group">
@@ -120,7 +124,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="tab-pane fade {% if ratings_active %}show active{% endif %}" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
+            <div class="tab-pane fade {% if active_elem == 'ratings' %}show active{% endif %}" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
                 <ul class="list-group">
                     {% for comment in comments %}
                         <li class="list-group-item border border-3">
@@ -128,20 +132,19 @@
                                 <div class="post">
                                     <div class="d-flex align-items-center mb-4 author-info">
                                         <h4 class="d-flex align-items-center text-decoration-none m-0 title-text">
-                                            Автор:&nbsp<a class="text-decoration-none link-dark fw-normal" href="{% url 'users:user_details' comment.user.id %}">{{ comment.user}}</a></h4>
+                                            <a class="text-decoration-none link-dark fw-normal" href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
+                                        </h4>
                                         
                                         <span class="d-flex align-bottom fw-light text-muted mt-2 ms-2">{{ comment.creation_datetime }}</span>
                                     </div>
                                     <p class="text-decoration-none fw-light">{{ comment.text|safe }}</p>
                                 </div>
-
                             </div>
                         </li>
                     {% empty %}
                     <h3 class="text-muted">Пока никто не написал отзыв. Вы можете быть первым!</h3>
                     {% endfor %}
                 </ul>
-                
                 
                 <div class="d-flex justify-content-md-between mt-2">
                     <div class="nav nav-pills d-flex justify-content-left mt-2">
@@ -160,10 +163,11 @@
                             <a href="?comment={{ comments.next_page_number }}"><button class="nav-link active" type="button">следующая страница</button></a>
                             <a href="?comment={{ comments.paginator.num_pages }}"><button class="nav-link active mx-2" type="button">конец &raquo;</button></a>
                         {% endif %}
-                    <div>
+                    </div>
                 </div>
                 
             </div>
+            
             {% if book.author == request.user %}
             <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
                 {% if book.is_blocked %}
