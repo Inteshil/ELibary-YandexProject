@@ -44,7 +44,7 @@ class BookChapterAdmin(SummernoteModelAdmin):
 
 
 @admin.register(BookComment)
-class BookChapterAdmin(SummernoteModelAdmin):
+class BookComentAdmin(SummernoteModelAdmin):
     fields = ('text', 'user', 'book', 'creation_datetime')
     list_display = ('book', 'user', 'creation_datetime')
     ordering = ('book', 'creation_datetime',)

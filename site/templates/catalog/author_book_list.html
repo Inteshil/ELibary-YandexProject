@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block top_of_list %}
-    <h1>Ваши книги</h1>
-    <a class="btn btn-outline-success btn-lg" href="{% url 'catalog:create_book' %}">
-        <img src="{% static 'catalog/img/add.png' %}" alt="" width="30px" height="30px">
-        Добавить книгу
-    </a>
+<h1>Ваши книги</h1>
+<a class="btn btn-outline-success btn-lg" href="{% url 'catalog:create_book' %}">
+    <img src="{% static 'catalog/img/add.png' %}" alt="" width="30" height="30">
+    Добавить книгу
+</a>
 {% endblock top_of_list %}
