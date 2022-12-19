@@ -88,22 +88,19 @@ class BookFilterForm(FormStyleMixin):
         return slice(start, stop)
 
 
-class BookFilter(filters.FilterSet):
+class BaseBookFilter(filters.FilterSet):
     name = filters.CharFilter(
         label='Название', lookup_expr='icontains',
         widget=forms.TextInput(attrs={'placeholder': 'Поиск по названию'})
         )
-    author__username = filters.CharFilter(
-        label='Имя автора', lookup_expr='icontains',
-        widget=forms.TextInput(attrs={'placeholder': 'Поиск по имени автора'})
-        )
     order = filters.OrderingFilter(
-        label='Сортировать по', empty_label='Умолчанию',
+        label='Сортировать', empty_label='По названию',
         method='filter_order',
-        fields=(
-            ('name', 'Названию'),
-            ('creation_date', 'Дате создания'),
-            ('chapter_quantity', 'Количеству глав'),
+        choices=(
+            ('creation_date', 'Сначала старые'),
+            ('-creation_date', 'Сначала новые'),
+            ('-chapter_quantity', 'Сначала много глав'),
+            ('chapter_quantity', 'Сначала мало глав'),
         )
     )
     age_rating = filters.ChoiceFilter(
@@ -126,7 +123,7 @@ class BookFilter(filters.FilterSet):
         model = Book
         form = BookFilterForm
         fields = (
-            'name', 'author__username', 'order', 'age_rating', 'creation_date',
+            'name', 'order', 'age_rating', 'creation_date',
             'chapter_quantity', 'tags'
             )
 
@@ -150,11 +147,24 @@ class BookFilter(filters.FilterSet):
         return queryset
 
     def filter_order(self, queryset, name, value):
-        order_field = 'chapter_quantity'
-        if value[0].startswith('-'):
-            order_field = '-' + order_field
-        return (
-            queryset
-            .annotate(chapter_quantity=models.Count('chapters'))
-            .order_by(order_field)
+        field_name = value[0]
+        if field_name.strip('-') == 'chapter_quantity':
+            queryset = queryset.annotate(
+                chapter_quantity=models.Count('chapters')
+                )
+        return queryset.order_by(field_name)
+
+
+class BookFilter(BaseBookFilter):
+    author__username = filters.CharFilter(
+        label='Имя автора', lookup_expr='icontains',
+        widget=forms.TextInput(attrs={'placeholder': 'Поиск по имени автора'})
+        )
+
+    class Meta:
+        model = Book
+        form = BookFilterForm
+        fields = (
+            'name', 'author__username', 'order', 'age_rating', 'creation_date',
+            'chapter_quantity', 'tags'
             )

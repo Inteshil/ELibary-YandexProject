@@ -26,7 +26,7 @@
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Автор</h5>
-                <a href="{{ book.author.get_absolute_url }}"><h4>{{ book.author.username }}</h4></a>
+                <a class="text-decoration-none link-dark" href="{{ book.author.get_absolute_url }}"><h4>{{ book.author.username }}</h4></a>
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Дата создания</h5>
@@ -132,7 +132,7 @@
                                 <div class="post">
                                     <div class="d-flex align-items-center mb-4 author-info">
                                         <h4 class="d-flex align-items-center text-decoration-none m-0 title-text">
-                                            Автор:&nbsp<a class="text-decoration-none link-dark fw-normal" href="{% url 'users:user_details' comment.user.id %}">{{ comment.user}}</a>
+                                            <a class="text-decoration-none link-dark fw-normal" href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
                                         </h4>
                                         
                                         <span class="d-flex align-bottom fw-light text-muted mt-2 ms-2">{{ comment.creation_datetime }}</span>

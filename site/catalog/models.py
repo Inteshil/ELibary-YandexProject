@@ -6,11 +6,7 @@ from users.models import User
 
 
 class Book(models.Model):
-    AGE_RATING_CHOICES = (
-        ('нет', 'Отсутствует'),
-        ('16+', '16+'),
-        ('18+', '18+'),
-    )
+    AGE_RATING_CHOICES = list(enumerate(('Отсутствует', '16+', '18+')))
 
     name = models.CharField('название', max_length=100)
     preview = models.ImageField('превью', upload_to='previews/%Y/%m')
@@ -19,7 +15,7 @@ class Book(models.Model):
     description = models.TextField(
         'описание', max_length=3000, default='Без описания'
         )
-    age_rating = models.TextField(
+    age_rating = models.SmallIntegerField(
         'возрастной рейтинг', choices=AGE_RATING_CHOICES, default='нет'
         )
     creation_date = models.DateField(
@@ -36,6 +32,7 @@ class Book(models.Model):
         verbose_name = 'книга'
         verbose_name_plural = 'книги'
         default_related_name = 'books'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name

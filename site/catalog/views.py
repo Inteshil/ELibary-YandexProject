@@ -13,7 +13,7 @@ from django_filters.views import FilterView
 from catalog.models import Book, BookChapter, BookComment
 from catalog.forms import BookForm, ChapterForm
 from catalog.utils import AuthorRequiredMixin
-from catalog.filters import BookFilter
+from catalog.filters import BookFilter, BaseBookFilter
 
 from rating.models import BookRating
 
@@ -37,6 +37,7 @@ class AuthorCatalogView(LoginRequiredMixin, CatalogView):
     ''' Список книг автора '''
 
     template_name = 'catalog/author_book_list.html'
+    filterset_class = BaseBookFilter
 
     def get_queryset(self):
         return Book.objects.get_queryset().filter(author=self.request.user)
@@ -191,6 +192,7 @@ class BookChapterView(DetailView):
             )
         if current is None:
             raise Http404('Глава не найдена')
+
         return current
 
     def get_queryset(self):
