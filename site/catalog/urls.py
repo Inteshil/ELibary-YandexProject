@@ -14,6 +14,11 @@ book_crud = [
         'book/<int:book_id>/', views.BookDetailView.as_view(),
         name='book_detail'
         ),
+    path(
+        'book/<int:book_id>/?comment=<int:comment_page>',
+        views.BookDetailView.as_view(),
+        name='book_detail_comments'
+        ),
 
     path('create/', views.CreateBookView.as_view(), name='create_book'),
     path(
@@ -28,21 +33,22 @@ book_crud = [
 
 book_chapter_crud = [
     path(
-        'book/<int:book_id>/<int:chapter_id>/',
+        'book/<int:book_id>/chapter/<int:chapter_id>/',
         views.BookChapterView.as_view(),
         name='book_chapter'
         ),
     path(
-        'book/<int:book_id>/create/', views.CreateChapterView.as_view(),
+        'book/<int:book_id>/chapter/create/',
+        views.CreateChapterView.as_view(),
         name='create_chapter'
         ),
     path(
-        'book/<int:book_id>/<int:chapter_id>/update/',
+        'book/<int:book_id>/chapter/<int:chapter_id>/update/',
         views.UpdateChapterView.as_view(),
         name='update_chapter'
         ),
     path(
-        'book/<int:book_id>/<int:chapter_id>/delete/',
+        'book/<int:book_id>/chapter/<int:chapter_id>/delete/',
         views.DeleteChapterView.as_view(),
         name='delete_chapter'
         ),
@@ -50,16 +56,17 @@ book_chapter_crud = [
 
 book_comment_crud = [
     path(
-        'book/<int:book_id>/create/', views.CreateCommentView.as_view(),
+        'book/<int:book_id>/comment/create/',
+        views.CreateCommentView.as_view(),
         name='create_comment'
         ),
     path(
-        'book/<int:book_id>/<int:comment_id>/update/',
+        'book/<int:book_id>/comment/<int:comment_id>/update/',
         views.UpdateCommentView.as_view(),
         name='update_comment'
         ),
     path(
-        'book/<int:book_id>/<int:comment_id>/delete/',
+        'book/<int:book_id>/comment/<int:comment_id>/delete/',
         views.DeleteCommentView.as_view(),
         name='delete_comment'
         ),
