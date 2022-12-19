@@ -8,7 +8,7 @@ from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
     )
 
-from catalog.forms import BookForm, ChapterForm
+from catalog.forms import BookForm, ChapterForm, CommentForm
 from catalog.models import Book, BookChapter, BookComment
 from catalog.utils import AuthorRequiredMixin
 from rating.models import BookRating
@@ -249,6 +249,67 @@ class DeleteChapterView(AuthorRequiredMixin, DeleteView):
         messages.add_message(
             self.request, messages.INFO,
             'Вы <strong>успешно</strong> удалили главу',
+            extra_tags='alert-info',
+            )
+        return super().post(request, *args, **kwargs)
+
+
+class CreateCommentView(AuthorRequiredMixin, CreateView):
+    template_name = 'base_form.html'
+    form_class = CommentForm
+    extra_context = {
+        'page_title': 'Создать отзыв',
+        'form_title': 'Создать отзыв',
+        'button_text': 'Создать',
+    }
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.book = self.book
+        self.object.user = self.request.user
+        return super().form_valid(form)
+
+
+class UpdateCommentView(AuthorRequiredMixin, UpdateView):
+    template_name = 'base_form.html'
+    form_class = CommentForm
+    pk_url_kwarg = 'comment_id'
+    extra_context = {
+        'page_title': 'Изменить отзыв',
+        'form_title': 'Изменить отзыв',
+        'button_text': 'Сохранить',
+    }
+
+    def get_object(self):
+        return super().get_object(
+            BookComment.objects.filter(book_id=self.kwargs['book_id'])
+            )
+
+
+class DeleteCommentView(AuthorRequiredMixin, DeleteView):
+    template_name = 'catalog/confirm.html'
+    pk_url_kwarg = 'comment_id'
+    extra_context = {
+        'page_title': 'Удалить отзыв',
+        'confirm_title': 'Вы уверены, что хотите удалить отзыв?',
+        'confirm_message': 'Это действие является необратимым!',
+    }
+
+    def get_object(self):
+        return super().get_object(
+            BookComment.objects.filter(book_id=self.kwargs['book_id'])
+            )
+
+    def get_success_url(self):
+        self.success_url = reverse(
+            'catalog:book_detail', kwargs={'book_id': self.kwargs['book_id']}
+            )
+        return super().get_success_url()
+
+    def post(self, request, *args, **kwargs):
+        messages.add_message(
+            self.request, messages.INFO,
+            'Вы <strong>успешно</strong> удалили отзыв',
             extra_tags='alert-info',
             )
         return super().post(request, *args, **kwargs)

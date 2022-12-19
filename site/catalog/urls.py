@@ -48,5 +48,21 @@ book_chapter_crud = [
         ),
 ]
 
+book_comment_crud = [
+    path(
+        'book/<int:book_id>/create/', views.CreateCommentView.as_view(),
+        name='create_comment'
+        ),
+    path(
+        'book/<int:book_id>/<int:comment_id>/update/',
+        views.UpdateCommentView.as_view(),
+        name='update_comment'
+        ),
+    path(
+        'book/<int:book_id>/<int:comment_id>/delete/',
+        views.DeleteCommentView.as_view(),
+        name='delete_comment'
+        ),
+]
 
-urlpatterns += book_chapter_crud + book_crud
+urlpatterns += book_chapter_crud + book_crud + book_comment_crud

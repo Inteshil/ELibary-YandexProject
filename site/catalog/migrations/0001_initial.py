@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Book',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('creation_data', models.DateField(auto_created=True, auto_now_add=True, verbose_name='дата создания')),
+                ('creation_date', models.DateField(auto_created=True, auto_now_add=True, verbose_name='дата создания')),
                 ('name', models.CharField(max_length=100, verbose_name='название')),
                 ('preview', models.ImageField(upload_to='previews/%Y/%m', verbose_name='превью')),
                 ('is_published', models.BooleanField(default=True, verbose_name='опубликовано')),

@@ -14,7 +14,7 @@ class BookAdmin(admin.ModelAdmin):
             'Информация', {
                 'fields': (
                     'description', 'age_rating', 'author', 'tags',
-                    'creation_data'
+                    'creation_date'
                     )
                 }
         ),
@@ -24,7 +24,7 @@ class BookAdmin(admin.ModelAdmin):
         )
     list_editable = ('is_published', 'is_blocked')
     filter_horizontal = ('tags',)
-    readonly_fields = ('creation_data',)
+    readonly_fields = ('creation_date',)
 
     class BookChapterInline(admin.TabularInline):
         model = BookChapter

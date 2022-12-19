@@ -25,7 +25,7 @@ class Book(models.Model):
     age_rating = models.TextField(
         'возрастной рейтинг', choices=AGE_RATING_CHOICES, null=True, blank=True
         )
-    creation_data = models.DateField(
+    creation_date = models.DateField(
         'дата создания', auto_created=True, auto_now_add=True
         )
     tags = models.ManyToManyField('Tag', verbose_name='теги', blank=True)

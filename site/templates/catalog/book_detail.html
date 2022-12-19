@@ -30,7 +30,7 @@
             </div>
             <div class="py-1">
                 <h5 class="text-muted">Дата создания</h5>
-                <h4>{{ book.creation_data }}</h4>
+                <h4>{{ book.creation_date }}</h4>
             </div>
             {% if book.age_rating %}
             <div class="py-1">
@@ -127,6 +127,7 @@
                             <div class="d-flex bd-highlight">
                                 <div class="post">
                                     <div class="d-flex align-items-center mb-4 author-info">
+                                        <h1>{{ user }}</h1>
                                         <h4 class="d-flex align-items-center text-decoration-none m-0 title-text">
                                             Автор:&nbsp<a class="text-decoration-none link-dark fw-normal" href="{% url 'users:user_details' comment.user.id %}">{{ comment.user}}</a></h4>
                                         

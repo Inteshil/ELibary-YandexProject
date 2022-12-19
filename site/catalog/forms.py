@@ -3,7 +3,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from django_summernote.widgets import SummernoteWidget
 
-from catalog.models import Book, BookChapter
+from catalog.models import Book, BookChapter, BookComment
 from core.forms import FormStyleMixin
 
 
@@ -35,4 +35,13 @@ class ChapterForm(forms.ModelForm, FormStyleMixin):
         fields = ('name', 'content', 'is_published')
         widgets = {
             'content': SummernoteWidget(),
+        }
+
+
+class CommentForm(forms.ModelForm, FormStyleMixin):
+    class Meta:
+        model = BookComment
+        fields = ('text',)
+        widgets = {
+            'text': SummernoteWidget(),
         }
