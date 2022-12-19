@@ -100,7 +100,7 @@ class BookDetailView(DetailView):
                 return
             try:
                 rate = int(request.POST['rate'][0])
-            except Exception:
+            except (ValueError, IndexError, TypeError):
                 return
             rating = BookRating.objects.get_rating_of_user(
                 self.kwargs['book_id'], self.request.user
