@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django_summernote.admin import SummernoteModelAdmin
 
-from catalog.models import Book, BookChapter, Tag
+from catalog.models import Book, BookChapter, BookComment, Tag
 
 
 @admin.register(Book)
@@ -41,6 +41,15 @@ class BookChapterAdmin(SummernoteModelAdmin):
     list_editable = ('is_published',)
     ordering = ('number',)
     summernote_fields = ('content',)
+
+
+@admin.register(BookComment)
+class BookChapterAdmin(SummernoteModelAdmin):
+    fields = ('text', 'user', 'book', 'creation_datetime')
+    list_display = ('book', 'user', 'creation_datetime')
+    ordering = ('book', 'creation_datetime',)
+    summernote_fields = ('text',)
+    readonly_fields = ('creation_datetime',)
 
 
 @admin.register(Tag)

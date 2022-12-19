@@ -1,17 +1,22 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger
+from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     DetailView, CreateView, UpdateView, DeleteView
     )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls.base import reverse_lazy, reverse
-from django.contrib import messages
-from django.http import Http404
 
 from django_filters.views import FilterView
 
 from catalog.models import Book, BookChapter
 from catalog.forms import BookForm, ChapterForm
+from catalog.models import Book, BookChapter, BookComment
 from catalog.utils import AuthorRequiredMixin
 from catalog.filters import BookFilter
+
+from rating.models import BookRating
 
 
 class CatalogView(FilterView):
@@ -43,7 +48,9 @@ class AuthorCatalogView(LoginRequiredMixin, CatalogView):
 class BookDetailView(DetailView):
     template_name = 'catalog/book_detail.html'
     pk_url_kwarg = 'book_id'
+    context_object_name = 'book'
     extra_context = {
+        'title_name': 'Детали книги',
         'page_title': 'Книга',
     }
 
@@ -52,10 +59,63 @@ class BookDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['chapters'] = BookChapter.objects.for_user(
-            self.request.user, self.kwargs['book_id']
+        book_rating = BookRating.objects.get_rating_of_book(self.object)
+        user_rating = BookRating.objects.get_rating_of_user(
+            self.object, self.request.user
             )
-        return context
+        context['main_active'] = False
+        context['chapters_active'] = False
+        context['ratings_active'] = False
+        comments_paginator = Paginator(BookComment.objects.get_comments_for_book(self.kwargs['book_id']), 2)
+        comments_number = self.request.GET.get('comment')
+        try:
+            context['comments'] = comments_paginator.page(comments_number)
+            context['ratings_active'] = True
+        except PageNotAnInteger:
+            context['comments'] = comments_paginator.page(1)
+            context['main_active'] = True
+        
+        if user_rating:
+            rate = int(user_rating.rating)
+        else:
+            rate = None
+        return {
+            **context,
+            'book_rating_avg': str(book_rating['book_rating_avg'])[:4],
+            'book_rating_num': book_rating['book_rating_num'],
+            'user_rating': rate
+        }
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        book = get_object_or_404(Book, pk=self.kwargs['book_id'])          
+
+        def sub():
+            if request.user == book.author:
+                return
+            if not 'rate' in request.POST:
+                return
+            try:
+                rate = int(request.POST['rate'][0])
+            except:
+                return
+            rating = BookRating.objects.get_rating_of_user(
+                self.kwargs['book_id'], self.request.user
+            )
+            self.object = self.get_object()
+            if rating is None:
+                self.object = BookRating()
+                self.object.book_id = self.kwargs['book_id']
+                self.object.user_id = self.request.user.id
+                self.object.rating = rate
+                self.object.save()
+            else:
+                rating.rating = rate
+                rating.save()
+        sub()
+        return HttpResponseRedirect(reverse('catalog:book_detail', kwargs={'book_id': kwargs['book_id']}))
 
 
 class CreateBookView(LoginRequiredMixin, CreateView):

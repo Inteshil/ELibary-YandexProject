@@ -1,8 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
+from catalog.managers import BookManager, BookChapterManager, CommentManager
 from users.models import User
-from catalog.managers import BookManager, BookChapterManager
 
 
 class Book(models.Model):
@@ -73,6 +73,29 @@ class BookChapter(models.Model):
             'catalog:book_chapter',
             kwargs={'book_id': self.book.pk, 'chapter_id': self.pk}
             )
+
+
+class BookComment(models.Model):
+    objects = CommentManager()
+
+    user = models.ForeignKey(
+        User,
+        verbose_name='автор отзыва',
+        on_delete=models.CASCADE
+    )
+    book = models.ForeignKey(
+        Book,
+        verbose_name='книга отзыва',
+        on_delete=models.CASCADE
+    )
+    text = models.TextField('текст отзыва', max_length=100000)
+    creation_datetime = models.DateTimeField(
+        'дата и время создания отзыва', auto_created=True, auto_now_add=True
+        )
+
+    class Meta:
+        verbose_name = 'отзыв'
+        verbose_name_plural = 'отзывы'
 
 
 class Tag(models.Model):
