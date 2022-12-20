@@ -125,6 +125,8 @@
                 </ul>
             </div>
             <div class="tab-pane fade {% if active_elem == 'ratings' %}show active{% endif %}" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
+                <a class="btn btn-outline-info btn-lg my-1" href="{% url 'catalog:create_comment' book.pk %}?comment={{ comments.paginator.num_pages }}">Написать отзыв</a>
+
                 <ul class="list-group">
                     {% for comment in comments %}
                         <li class="list-group-item border border-3">
@@ -134,8 +136,16 @@
                                         <h4 class="d-flex align-items-center text-decoration-none m-0 title-text">
                                             <a class="text-decoration-none link-dark fw-normal" href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
                                         </h4>
-                                        
                                         <span class="d-flex align-bottom fw-light text-muted mt-2 ms-2">{{ comment.creation_datetime }}</span>
+                                        
+                                        {% if user == comment.user %}
+                                        <a class="text-decoration-none px-2" href="{% url 'catalog:update_comment' book.pk comment.pk %}?comment={{ comments.number }}">
+                                            <img src="{% static 'catalog/img/edit.png' %}" alt="Изменить" width-"20px" height="20px">
+                                        </a>
+                                        <a class="text-decoration-none px-2" href="{% url 'catalog:delete_comment' book.pk comment.pk %}?comment={{ comments.number }}">
+                                            <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
+                                        </a>
+                                        {% endif %}
                                     </div>
                                     <p class="text-decoration-none fw-light">{{ comment.text|safe }}</p>
                                 </div>
@@ -149,8 +159,8 @@
                 <div class="d-flex justify-content-md-between mt-2">
                     <div class="nav nav-pills d-flex justify-content-left mt-2">
                         {% if comments.has_previous %}
-                            <a href="?comment=1"><button class="nav-link active" type="button">&laquo; начало</button></a>
-                            <a href="?comment={{ comments.previous_page_number }}"><button class="nav-link active mx-2" type="button">предыдущая странциа</button></a>
+                            <a href="{% url 'catalog:book_detail_comments' book.pk 1 %}"><button class="nav-link active" type="button">&laquo; начало</button></a>
+                            <a href="{% url 'catalog:book_detail_comments' book.pk comments.previous_page_number %}"><button class="nav-link active mx-2" type="button">предыдущая странциа</button></a>
                         {% endif %}
                     </div>
                 
@@ -160,8 +170,8 @@
 
                     <div class="nav nav-pills d-flex justify-content-rigth mt-2">
                         {% if comments.has_next %}
-                            <a href="?comment={{ comments.next_page_number }}"><button class="nav-link active" type="button">следующая страница</button></a>
-                            <a href="?comment={{ comments.paginator.num_pages }}"><button class="nav-link active mx-2" type="button">конец &raquo;</button></a>
+                            <a href="{% url 'catalog:book_detail_comments' book.pk comments.next_page_number %}"><button class="nav-link active" type="button">следующая страница</button></a>
+                            <a href="{% url 'catalog:book_detail_comments' book.pk comments.paginator.num_pages %}"><button class="nav-link active mx-2" type="button">конец &raquo;</button></a>
                         {% endif %}
                     </div>
                 </div>
