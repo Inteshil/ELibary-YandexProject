@@ -6,14 +6,14 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     DetailView, CreateView, UpdateView, DeleteView
-    )
+)
 from django_filters.views import FilterView
 from django.db import transaction
 
-from catalog.models import Book, BookChapter, BookComment
-from catalog.forms import BookForm, ChapterForm
-from catalog.utils import AuthorRequiredMixin
 from catalog.filters import BookFilter, BaseBookFilter
+from catalog.forms import BookForm, ChapterForm, CommentForm
+from catalog.models import Book, BookChapter, BookComment
+from catalog.utils import AuthorRequiredMixin
 from rating.models import BookRating
 
 
@@ -60,11 +60,11 @@ class BookDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['chapters'] = BookChapter.objects.for_user(
             self.request.user, self.kwargs['book_id']
-            )
+        )
         book_rating = BookRating.objects.get_rating_of_book(self.object)
         user_rating = BookRating.objects.get_rating_of_user(
             self.object, self.request.user
-            )
+        )
 
         context['user_rating'] = None
         if user_rating:
@@ -74,13 +74,13 @@ class BookDetailView(DetailView):
         comments_paginator = Paginator(
             BookComment.objects.get_comments_for_book(
                 self.kwargs['book_id']
-                ), 2
-            )
-        comments_number = self.request.GET.get('comment')
+            ), 2
+        )
         try:
+            comments_number = self.kwargs['comment_page']
             context['comments'] = comments_paginator.page(comments_number)
             context['active_elem'] = 'ratings'
-        except PageNotAnInteger:
+        except (PageNotAnInteger, KeyError):
             context['comments'] = comments_paginator.page(1)
             context['main_active'] = True
         
@@ -198,7 +198,7 @@ class DeleteBookView(LoginRequiredMixin, DeleteView):
             self.request, messages.INFO,
             'Вы <strong>успешно</strong> удалили книгу',
             extra_tags='alert-info',
-            )
+        )
         return super().post(request, *args, **kwargs)
 
 
@@ -215,12 +215,12 @@ class BookChapterView(DetailView):
     def get_object(self):
         queryset = BookChapter.objects.for_user(
             self.request.user, self.kwargs.get('book_id')
-            )
+        )
         current, self.neighboring_chapters = (
             BookChapter.objects.get_neighboring_chapters(
                 queryset, self.kwargs.get('chapter_id')
-                )
             )
+        )
         if current is None:
             raise Http404('Глава не найдена')
 
@@ -229,7 +229,7 @@ class BookChapterView(DetailView):
     def get_queryset(self):
         return BookChapter.objects.for_user(
             self.request.user, self.kwargs['book_id']
-            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -266,7 +266,7 @@ class UpdateChapterView(AuthorRequiredMixin, UpdateView):
     def get_object(self):
         return super().get_object(
             BookChapter.objects.filter(book_id=self.kwargs['book_id'])
-            )
+        )
 
 
 class DeleteChapterView(AuthorRequiredMixin, DeleteView):
@@ -281,12 +281,12 @@ class DeleteChapterView(AuthorRequiredMixin, DeleteView):
     def get_object(self):
         return super().get_object(
             BookChapter.objects.filter(book_id=self.kwargs['book_id'])
-            )
+        )
 
     def get_success_url(self):
         self.success_url = reverse(
             'catalog:book_detail', kwargs={'book_id': self.kwargs['book_id']}
-            )
+        )
         return super().get_success_url()
 
     def post(self, request, *args, **kwargs):
@@ -294,5 +294,107 @@ class DeleteChapterView(AuthorRequiredMixin, DeleteView):
             self.request, messages.INFO,
             'Вы <strong>успешно</strong> удалили главу',
             extra_tags='alert-info',
+        )
+        return super().post(request, *args, **kwargs)
+
+
+# Comments Views
+class CreateCommentView(CreateView):
+    template_name = 'base_form.html'
+    form_class = CommentForm
+    extra_context = {
+        'page_title': 'Создать отзыв',
+        'form_title': 'Создать отзыв',
+        'button_text': 'Создать',
+    }
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.book = Book.objects.get(id=self.kwargs['book_id'])
+        self.object.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        self.success_url = reverse(
+            'catalog:book_detail_comments',
+            kwargs={'book_id': self.kwargs['book_id'],
+                    'comment_page': self.request.GET.get('comment')}
+        )
+        return super().get_success_url()
+
+
+class UpdateCommentView(UpdateView):
+    template_name = 'base_form.html'
+    form_class = CommentForm
+    pk_url_kwarg = 'comment_id'
+    extra_context = {
+        'page_title': 'Изменить отзыв',
+        'form_title': 'Изменить отзыв',
+        'button_text': 'Сохранить',
+    }
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user != (BookComment
+                                 .objects
+                                 .get(id=self.kwargs['comment_id'])
+                                 .user
+                                 ):
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return super().get_object(
+            BookComment.objects.filter(
+                book_id=self.kwargs['book_id']
             )
+        )
+
+    def get_success_url(self):
+        self.success_url = reverse(
+            'catalog:book_detail_comments',
+            kwargs={'book_id': self.kwargs['book_id'],
+                    'comment_page': self.request.GET.get('comment')}
+        )
+        return super().get_success_url()
+
+
+class DeleteCommentView(DeleteView):
+    template_name = 'catalog/confirm.html'
+    pk_url_kwarg = 'comment_id'
+    extra_context = {
+        'page_title': 'Удалить отзыв',
+        'confirm_title': 'Вы уверены, что хотите удалить отзыв?',
+        'confirm_message': 'Это действие является необратимым!',
+    }
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user != (BookComment
+                                 .objects
+                                 .get(id=self.kwargs['comment_id'])
+                                 .user
+                                 ):
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        return super().get_object(
+            BookComment.objects.filter(
+                book_id=self.kwargs['book_id']
+            )
+        )
+
+    def get_success_url(self):
+        self.success_url = reverse(
+            'catalog:book_detail_comments',
+            kwargs={'book_id': self.kwargs['book_id'],
+                    'comment_page': 1}
+        )
+        return super().get_success_url()
+
+    def post(self, request, *args, **kwargs):
+        messages.add_message(
+            self.request, messages.INFO,
+            'Вы <strong>успешно</strong> удалили отзыв',
+            extra_tags='alert-info',
+        )
         return super().post(request, *args, **kwargs)
