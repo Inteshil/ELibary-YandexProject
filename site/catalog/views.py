@@ -7,8 +7,8 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     DetailView, CreateView, UpdateView, DeleteView
     )
-
 from django_filters.views import FilterView
+from django.db import transaction
 
 from catalog.models import Book, BookChapter, BookComment
 from catalog.forms import BookForm, ChapterForm
@@ -103,7 +103,27 @@ class BookDetailView(DetailView):
 
         book = get_object_or_404(Book, pk=self.kwargs['book_id'])
 
-        def sub():
+        @transaction.atomic
+        def chapter_sub():
+            if request.user != book.author:
+                return
+            if 'chapter' not in request.POST:
+                return
+            try:
+                order = request.POST.getlist('chapter')
+            except (ValueError, IndexError, TypeError):
+                return
+            chapters = BookChapter.objects.for_user(
+                self.request.user, self.kwargs['book_id']
+            )
+            arr = []
+            for i in range(len(order)):
+                ch_id = int(order[i])
+                elem = chapters.get(pk=ch_id)
+                elem.number = i
+                elem.save()
+
+        def rate_sub():
             if request.user == book.author:
                 return
             if 'rate' not in request.POST:
@@ -125,7 +145,8 @@ class BookDetailView(DetailView):
             else:
                 rating.rating = rate
                 rating.save()
-        sub()
+        rate_sub()
+        chapter_sub()
         return redirect('catalog:book_detail', book_id=kwargs['book_id'])
 
 
