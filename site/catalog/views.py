@@ -79,7 +79,7 @@ class BookDetailView(DetailView):
         try:
             comments_number = self.kwargs['comment_page']
             context['comments'] = comments_paginator.page(comments_number)
-            context['active_elem'] = 'ratings'
+            context['active_elem'] = 'main'
         except (PageNotAnInteger, KeyError):
             context['comments'] = comments_paginator.page(1)
             context['main_active'] = True
