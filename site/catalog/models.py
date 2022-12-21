@@ -56,11 +56,6 @@ class BookChapter(models.Model):
         verbose_name = 'глава'
         verbose_name_plural = 'главы'
         default_related_name = 'chapters'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['book', 'number'], name='chapter_number_unique'
-                )
-        ]
 
     def __str__(self):
         return self.name

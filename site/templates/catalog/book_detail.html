@@ -94,9 +94,33 @@
                     <img src="{% static 'catalog/img/add.png' %}" alt="" width="30" height="30">
                     Добавить главу
                 </a>
+                <button class="btn btn-primary" id="save_chapter_order">Сохранить порядок глав</button>
+                {% csrf_token %} 
                 {% endif %}
                 
-                <ul class="list-group">
+                <ul class="list-group tasks__list" id="chapters">
+                    {% if book.author == request.user %}
+                        {% for chapter in chapters %}
+                        <li class="list-group-item tasks__item" data-id="{{ chapter.id }}">
+                            <div class="d-flex bd-highlight">
+                                <div class="d-flex flex-fill">
+                                    <a class="text-decoration-none link-secondary" href="{{ chapter.get_absolute_url }}">
+                                        Глава {{ forloop.counter }}. {{ chapter.name|capfirst }}
+                                    </a>
+                                </div>
+                                <div>
+                                    <a class="text-decoration-none px-2" href="{% url 'catalog:update_chapter' book.pk chapter.pk %}">
+                                        <img src="{% static 'catalog/img/edit.png' %}" alt="Изменить" width-"20px" height="20px">
+                                    </a>
+                                    <a class="text-decoration-none px-2" href="{% url 'catalog:delete_chapter' book.pk chapter.pk %}">
+                                        <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+
                     {% for chapter in chapters %}
                     <li class="list-group-item">
                         <div class="d-flex bd-highlight">
@@ -105,23 +129,12 @@
                                     Глава {{ forloop.counter }}. {{ chapter.name|capfirst }}
                                 </a>
                             </div>
-
-                            {% if book.author == request.user %}
-                            <div>
-                                <a class="text-decoration-none px-2" href="{% url 'catalog:update_chapter' book.pk chapter.pk %}">
-                                    <img src="{% static 'catalog/img/edit.png' %}" alt="Изменить" width-"20px" height="20px">
-                                </a>
-                                <a class="text-decoration-none px-2" href="{% url 'catalog:delete_chapter' book.pk chapter.pk %}">
-                                    <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
-                                </a>
-                            </div>
-                            {% endif %}
-
                         </div>
                     </li>
                     {% empty %}
                     <h3 class="text-muted">Автор не добавил ни одной главы</h3>
                     {% endfor %}
+                    {% endif %}
                 </ul>
             </div>
             <div class="tab-pane fade {% if active_elem == 'ratings' %}show active{% endif %}" id="ratings" role="tabpanel" aria-labelledby="ratings-tab">
