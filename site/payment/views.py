@@ -1,12 +1,9 @@
 from django.views.generic import FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.urls import reverse_lazy
-from django.conf import settings
 from django.db.models import Q
-
-from sberbank.service import BankService
 
 from payment.forms import BuyBookForm
 from payment.models import PurchasedBook
@@ -14,6 +11,11 @@ from catalog.models import Book
 
 
 class BuyBookView(LoginRequiredMixin, FormView):
+    '''
+    Класс оплаты, который будет использоваться ТОЛЬКО для разработки.
+    Для продакшн нужно будет подключить платежный шлюз.
+    '''
+
     template_name = 'base_form.html'
     form_class = BuyBookForm
     success_url = reverse_lazy('payment:success')
@@ -42,24 +44,8 @@ class BuyBookView(LoginRequiredMixin, FormView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        if settings.DEBUG:
-            return super().get(request, *args, **kwargs)
-        else:
-            try:
-                amount = self.book.price
-                client_id = self.request.user.pk
-
-                svc = BankService('main')
-
-                payment, url = svc.pay(
-                    amount, client_id=client_id, description='Оплата книги'
-                )
-                return redirect(url)
-            except Exception:
-                pass
-
     def post(self, request, *args, **kwargs):
+        # ТОЛЬКО ДЛЯ РАЗРАБОТКИ!!!
         PurchasedBook.objects.create(
             book=self.book, user=self.request.user
         )
