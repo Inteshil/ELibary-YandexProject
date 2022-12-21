@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import Http404, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -12,9 +13,7 @@ from django_filters.views import FilterView
 from catalog.filters import BookFilter, BaseBookFilter
 from catalog.forms import BookForm, ChapterForm, CommentForm
 from catalog.models import Book, BookChapter, BookComment
-from catalog.forms import BookForm, ChapterForm
 from catalog.utils import AuthorRequiredMixin
-from catalog.filters import BookFilter, BaseBookFilter
 
 from rating.models import BookRating
 
@@ -60,9 +59,11 @@ class BookDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['chapters'] = BookChapter.objects.for_user(
+        chapters, is_book_enable = BookChapter.objects.bought_required(
             self.request.user, self.kwargs['book_id']
         )
+        context['chapters'] = chapters
+        context['is_book_enable'] = is_book_enable
 
         book_rating = BookRating.objects.get_rating_of_book(self.object)
         user_rating = BookRating.objects.get_rating_of_user(
@@ -183,23 +184,23 @@ class BookChapterView(DetailView):
     }
 
     def get_object(self):
-        queryset = BookChapter.objects.for_user(
+        qs, is_book_enabled = BookChapter.objects.bought_required(
             self.request.user, self.kwargs.get('book_id')
         )
+
+        if is_book_enabled is False:
+            raise PermissionDenied
+
         current, self.neighboring_chapters = (
             BookChapter.objects.get_neighboring_chapters(
-                queryset, self.kwargs.get('chapter_id')
+                qs, self.kwargs.get('chapter_id')
             )
         )
+
         if current is None:
-            raise Http404('Глава не найдена')
+            raise Http404
 
         return current
-
-    def get_queryset(self):
-        return BookChapter.objects.for_user(
-            self.request.user, self.kwargs['book_id']
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -269,7 +270,7 @@ class DeleteChapterView(AuthorRequiredMixin, DeleteView):
 
 
 # Comments Views
-class CreateCommentView(CreateView):
+class CreateCommentView(LoginRequiredMixin, CreateView):
     template_name = 'base_form.html'
     form_class = CommentForm
     extra_context = {
@@ -293,7 +294,7 @@ class CreateCommentView(CreateView):
         return super().get_success_url()
 
 
-class UpdateCommentView(UpdateView):
+class UpdateCommentView(LoginRequiredMixin, UpdateView):
     template_name = 'base_form.html'
     form_class = CommentForm
     pk_url_kwarg = 'comment_id'
@@ -328,7 +329,7 @@ class UpdateCommentView(UpdateView):
         return super().get_success_url()
 
 
-class DeleteCommentView(DeleteView):
+class DeleteCommentView(LoginRequiredMixin, DeleteView):
     template_name = 'catalog/confirm.html'
     pk_url_kwarg = 'comment_id'
     extra_context = {

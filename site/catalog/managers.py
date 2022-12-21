@@ -7,6 +7,11 @@ class BookManager(models.Manager):
             super().get_queryset()
             .select_related('author')
             .prefetch_related('tags')
+            .annotate(
+                avg_rating=models.Avg('ratings__rating'),
+                rating_count=models.Count('ratings'),
+                )
+            .order_by('-rating_count', '-avg_rating')
             )
 
     def enabled(self):
@@ -35,14 +40,28 @@ class BookChapterManager(models.Manager):
             .select_related('book')
             )
 
-    def for_user(self, user, book):
-        published_qs = self.published(book)
+    def bought_required(self, user, book_id):
+        ''' Возвращает QuerySet и доступна ли пользователю книга '''
+
+        qs = self.published(book_id)
+
+        if len(qs) != 0:
+            book = qs[0].book
+            if book.price > 0:
+                if user.is_anonymous:
+                    return self.none(), False
+                if user != book.author:
+                    purchased_by_user = book.purchased.filter(user=user)
+                    if len(purchased_by_user) == 0:
+                        return self.none(), False
+
         if user.is_authenticated:
             author_qs = self.get_queryset().filter(
-                book=book, book__author=user
+                book=book_id, book__author=user
                 )
-            return published_qs | author_qs
-        return published_qs
+            qs |= author_qs
+
+        return qs, True
 
     def get_max_number(self, book):
         qs = self.filter(book=book)
@@ -53,6 +72,7 @@ class BookChapterManager(models.Manager):
 
     def get_neighboring_chapters(self, queryset, chapter_id):
         previous = current = next = None
+
         for idx in range(len(queryset)):
             current_chapter = queryset[idx]
             if current_chapter.pk == chapter_id:

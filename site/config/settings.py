@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from django.urls.base import reverse_lazy
+from django.urls import reverse_lazy
 
 import environ
 
@@ -29,6 +29,7 @@ MODULE_APPS = [
     'debug_toolbar',
     'django_summernote',
     'django_filters',
+    'sberbank',
 ]
 LOCAL_APPS = [
     'static_pages.apps.StaticPagesConfig',
@@ -36,6 +37,7 @@ LOCAL_APPS = [
     'core.apps.CoreConfig',
     'catalog.apps.CatalogConfig',
     'rating.apps.RatingConfig',
+    'payment.apps.PaymentConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + MODULE_APPS + LOCAL_APPS
 
@@ -133,3 +135,14 @@ SUMMERNOTE_CONFIG = {
             ['view', ['fullscreen', 'help']],
         ],
     }
+
+MERCHANTS = {
+  'main': {
+    'username': '',
+    'password': '',
+    'success_url': '',
+    'fail_url': '',
+    'app_success_url': reverse_lazy('payment:success'),
+    'app_fail_url': reverse_lazy('payment:fail'),
+  }
+}

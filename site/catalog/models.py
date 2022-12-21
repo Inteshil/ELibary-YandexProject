@@ -9,6 +9,7 @@ class Book(models.Model):
     AGE_RATING_CHOICES = list(enumerate(('Отсутствует', '16+', '18+')))
 
     name = models.CharField('название', max_length=100)
+    price = models.PositiveIntegerField('стоимость ₽', default=0)
     preview = models.ImageField('превью', upload_to='previews/%Y/%m')
     is_published = models.BooleanField('опубликовано', default=True)
     is_blocked = models.BooleanField('заблокировано', default=False)
@@ -32,7 +33,6 @@ class Book(models.Model):
         verbose_name = 'книга'
         verbose_name_plural = 'книги'
         default_related_name = 'books'
-        ordering = ('name',)
 
     def __str__(self):
         return self.name

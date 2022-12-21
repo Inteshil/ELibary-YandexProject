@@ -11,7 +11,13 @@
           <div class="btn-group">
             <a href="{{ book.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
           </div>
-          <small class="text-muted small-text">Оценка</small>
+          <small class="text-muted small-text">
+            {% if book.avg_rating %}
+            {{ book.avg_rating|floatformat:2 }}
+            {% else %}
+            Нет оценок
+            {% endif %}
+          </small>
         </div>
       </div>
 
