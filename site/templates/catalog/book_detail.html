@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-
-{% load static %}
+{% block extrahead %}
+<script src="{% static 'js/drag_manager.js' %}"></script>
+{% endblock extrahead %}
 
 {% block content %}
 <div class="row align-items-start">
@@ -99,7 +99,7 @@
                     <img src="{% static 'catalog/img/add.png' %}" alt="" width="30" height="30">
                     Добавить главу
                 </a>
-                <button class="btn btn-primary" id="save_chapter_order">Сохранить порядок глав</button>
+                <button class="btn btn-outline-primary btn-lg" id="save_chapter_order">Сохранить порядок глав</button>
                 {% csrf_token %} 
                 {% endif %}
                 {% if is_book_enable %}
@@ -108,6 +108,9 @@
                         {% for chapter in chapters %}
                         <li class="list-group-item tasks__item" data-id="{{ chapter.id }}">
                             <div class="d-flex bd-highlight">
+                                <div class="me-2" title="Перетащить">
+                                    <img style="pointer-events:none;" width-"20px" height="20px" src="{% static 'catalog/img/drag_and_drop.png' %}" alt="Перетащить">
+                                </div>
                                 <div class="d-flex flex-fill">
                                     <a class="text-decoration-none link-secondary" href="{{ chapter.get_absolute_url }}">
                                         Глава {{ forloop.counter }}. {{ chapter.name|capfirst }}

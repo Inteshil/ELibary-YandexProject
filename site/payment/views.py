@@ -1,7 +1,6 @@
 from django.views.generic import FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.urls import reverse_lazy
 from django.db.models import Q
 
@@ -31,7 +30,7 @@ class BuyBookView(LoginRequiredMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         book_id = kwargs.get('book_id', None)
         user = self.request.user
-        if book_id and user.is_authenticated:
+        if user.is_authenticated:
             self.book = get_object_or_404(
                 Book.objects.enabled().exclude(
                     Q(author=user) | Q(price=0) |
@@ -39,8 +38,6 @@ class BuyBookView(LoginRequiredMixin, FormView):
                     ),
                 pk=book_id
                 )
-        else:
-            raise Http404
 
         return super().dispatch(request, *args, **kwargs)
 

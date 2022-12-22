@@ -118,7 +118,7 @@ class BookDetailView(DetailView):
                 order = request.POST.getlist('chapter')
             except (ValueError, IndexError, TypeError):
                 return
-            chapters = BookChapter.objects.for_user(
+            chapters, _ = BookChapter.objects.bought_required(
                 self.request.user, self.kwargs['book_id']
             )
             for i in range(len(order)):
