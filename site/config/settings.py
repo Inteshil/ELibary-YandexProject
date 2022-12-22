@@ -34,7 +34,6 @@ LOCAL_APPS = [
     'catalog.apps.CatalogConfig',
     'core.apps.CoreConfig',
     'download.apps.DownloadConfig',
-    'payment.apps.PaymentConfig'
     'rating.apps.RatingConfig',
     'static_pages.apps.StaticPagesConfig',
     'users.apps.UsersConfig',
