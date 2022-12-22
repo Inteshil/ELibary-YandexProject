@@ -84,21 +84,13 @@ class BookDetailView(DetailView):
         try:
             comments_number = self.kwargs['comment_page']
             context['comments'] = comments_paginator.page(comments_number)
-            context['active_elem'] = 'main'
+            context['active_elem'] = 'ratings'
         except (PageNotAnInteger, KeyError):
             context['comments'] = comments_paginator.page(1)
-            context['main_active'] = True
 
+        context['user_rating'] = None
         if user_rating:
-            rate = int(user_rating.rating)
-        else:
-            rate = None
-        return {
-            **context,
-            'book_rating_avg': str(book_rating['book_rating_avg'])[:4],
-            'book_rating_num': book_rating['book_rating_num'],
-            'user_rating': rate
-        }
+            context['user_rating'] = int(user_rating.rating)
 
         return {**context, **book_rating}
 
