@@ -31,12 +31,13 @@ MODULE_APPS = [
     'django_filters',
 ]
 LOCAL_APPS = [
+    'catalog.apps.CatalogConfig',
+    'core.apps.CoreConfig',
+    'download.apps.DownloadConfig',
+    'payment.apps.PaymentConfig'
+    'rating.apps.RatingConfig',
     'static_pages.apps.StaticPagesConfig',
     'users.apps.UsersConfig',
-    'core.apps.CoreConfig',
-    'catalog.apps.CatalogConfig',
-    'rating.apps.RatingConfig',
-    'download.apps.DownloadConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + MODULE_APPS + LOCAL_APPS
 
