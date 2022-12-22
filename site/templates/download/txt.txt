@@ -1,0 +1,10 @@
+Name: {{ book.name }}
+Author: {{ book.author }}
+
+Chapters:
+{% for chapter in chapters %}{{ forloop.counter }}) {{ chapter.name }}
+{% endfor%}
+{% for chapter in chapters %}Chapter #{{ forloop.counter }} {{ chapter.name }}
+{{ chapter.content|striptags }}
+
+{% endfor%}

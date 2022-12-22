@@ -12,6 +12,7 @@ urlpatterns = [
     path('', include('static_pages.urls')),
     path('users/', include('users.urls')),
     path('catalog/', include('catalog.urls')),
+    path('download/', include('download.urls')),
     path('payment/', include('payment.urls')),
 ]
 
