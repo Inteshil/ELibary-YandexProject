@@ -66,7 +66,6 @@ class BookDetailView(DetailView):
         context['chapters'] = chapters
         context['is_book_enable'] = is_book_enable
 
-        book_rating = BookRating.objects.get_rating_of_book(self.object)
         user_rating = BookRating.objects.get_rating_of_user(
             self.object, self.request.user
         )
@@ -92,7 +91,7 @@ class BookDetailView(DetailView):
         if user_rating:
             context['user_rating'] = int(user_rating.rating)
 
-        return {**context, **book_rating}
+        return context
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
