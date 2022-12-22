@@ -63,6 +63,16 @@ class BookChapterManager(models.Manager):
 
         return qs, True
 
+    def for_author(self, user, book):
+        published_qs = self.published(book)
+        if user.is_authenticated:
+            author_qs = self.get_queryset().filter(
+                book=book, book__author=user
+                )
+            return published_qs | author_qs
+        return published_qs
+
+
     def get_max_number(self, book):
         qs = self.filter(book=book)
         max_number = qs.aggregate(number=models.Max('number'))['number']
