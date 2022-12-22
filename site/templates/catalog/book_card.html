@@ -3,7 +3,9 @@
 <div class="col-3">
     <div class="card shadow-sm">
 
-      <img class="card-img border" src="{{ book.preview.url }}" alt="картинка">
+      <img class="card-img border" 
+      src={% if book.preview %}"{{ book.preview.url }}"{% else %}"{% static 'catalog/img/book.png' %}"{% endif %} 
+      alt="картинка">
 
       <div class="card-body">
         <h5 class="card-text">{{ book.name }}</h5>

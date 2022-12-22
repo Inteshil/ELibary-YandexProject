@@ -8,7 +8,9 @@
 {% block content %}
 <div class="row align-items-start">
     <div class="col-3">
-        <img class="img-thumbnail border" src="{{ book.preview.url }}" alt="картинка">
+        <img class="img-thumbnail border" 
+        src={% if book.preview %}"{{ book.preview.url }}"{% else %}"{% static 'catalog/img/book.png' %}"{% endif %} 
+        alt="картинка">
         <div class="my-3">
             {% if chapters %}
             <a class="btn btn-danger btn-lg d-block my-1" href="{{ chapters.0.get_absolute_url }}">Начать читать</a>
