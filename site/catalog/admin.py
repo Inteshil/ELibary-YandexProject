@@ -8,7 +8,7 @@ from catalog.models import Book, BookChapter, BookComment, Tag
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('Основное', {'fields': ('name', 'preview')}),
+        ('Основное', {'fields': ('name', 'preview', 'price')}),
         ('Состояние', {'fields': ('is_published', 'is_blocked')}),
         (
             'Информация', {

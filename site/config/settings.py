@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from django.urls.base import reverse_lazy
+from django.urls import reverse_lazy
 
 import environ
 
@@ -35,6 +35,7 @@ LOCAL_APPS = [
     'core.apps.CoreConfig',
     'download.apps.DownloadConfig',
     'rating.apps.RatingConfig',
+    'payment.apps.PaymentConfig',
     'static_pages.apps.StaticPagesConfig',
     'users.apps.UsersConfig',
 ]
