@@ -20,8 +20,8 @@
         <div class="bg-white p-4">
             <div class="py-1">
                 <h5 class="text-muted">Оценка</h5>
-                {% if book_rating_num > 0 %}
-                <h4 class="d-inline">{{ book_rating_avg }}</h4><h6 class="d-inline text-muted px-2">{{ book_rating_num }}</h6>
+                {% if book.rating_count > 0 %}
+                <h4 class="d-inline">{{ book.avg_rating|floatformat:2 }}</h4><h6 class="d-inline text-muted px-2">{{ book.rating_count }}</h6>
                 {% else %}
                 <h4>Нет оценок</h4>
                 {% endif %}
