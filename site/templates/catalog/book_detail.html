@@ -14,7 +14,9 @@
             {% if chapters %}
             <a class="btn btn-danger btn-lg d-block my-1" href="{{ chapters.0.get_absolute_url }}">Начать читать</a>
             {% endif %}
+            {% if chapters %}
             <a class="btn btn-danger btn-lg d-block my-1" href="{% url 'download:download_book_txt' book.pk %}">Скачать</a>
+            {% endif %}
         </div>
         <div class="bg-white p-4">
             <div class="py-1">
