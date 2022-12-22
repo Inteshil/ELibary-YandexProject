@@ -23,7 +23,7 @@
   venv\Scripts\activate
   ```
 - Для **linux/mac**
-- ```
+  ```
   source venv/bin/activate
   ```
 - Загрузите внешние зависимости
