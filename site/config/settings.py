@@ -36,6 +36,7 @@ LOCAL_APPS = [
     'core.apps.CoreConfig',
     'catalog.apps.CatalogConfig',
     'rating.apps.RatingConfig',
+    'download.apps.DownloadConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + MODULE_APPS + LOCAL_APPS
 
