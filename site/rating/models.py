@@ -47,6 +47,7 @@ class BookRating(models.Model):
     objects = BookRatingManager()
 
     class Meta:
+        default_related_name = 'ratings'
         constraints = (
             models.UniqueConstraint(
                 fields=('book', 'user'), name='book_user_unique'

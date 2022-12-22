@@ -94,9 +94,10 @@ class BaseBookFilter(filters.FilterSet):
         widget=forms.TextInput(attrs={'placeholder': 'Поиск по названию'})
         )
     order = filters.OrderingFilter(
-        label='Сортировать', empty_label='По названию',
+        label='Сортировка', empty_label='По умолчанию',
         method='filter_order',
         choices=(
+            ('-avg_rating', 'Высокая оценка'),
             ('creation_date', 'Сначала старые'),
             ('-creation_date', 'Сначала новые'),
             ('-chapter_quantity', 'Сначала много глав'),

@@ -12,13 +12,13 @@ class BookForm(forms.ModelForm, FormStyleMixin):
     class Meta:
         model = Book
         fields = (
-            'name', 'preview', 'description',
+            'name', 'preview', 'description', 'price',
             'age_rating', 'tags', 'is_published',
             )
 
         widgets = {
             'preview': forms.FileInput(),
-            'tags': FilteredSelectMultiple('теги', False)
+            'tags': FilteredSelectMultiple('теги', False),
         }
         labels = {
             'preview': 'Изменить превью',

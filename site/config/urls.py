@@ -8,9 +8,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     path('summernote/', include('django_summernote.urls')),
+
     path('', include('static_pages.urls')),
     path('users/', include('users.urls')),
     path('catalog/', include('catalog.urls')),
+    path('payment/', include('payment.urls')),
 ]
 
 if settings.DEBUG:
