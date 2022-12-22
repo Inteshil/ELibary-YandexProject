@@ -22,6 +22,10 @@
   ```
   venv\Scripts\activate
   ```
+- Для **linux/mac**
+- ```
+  source venv/bin/activate
+  ```
 - Загрузите внешние зависимости
   ```
   pip install -r requirements.txt
