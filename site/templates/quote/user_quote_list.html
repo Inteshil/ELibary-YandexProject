@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center mb-5">Ваши цитаты</h1>
+<ul class="list-group list-group-flush">
+{% for quote in quotes %}
+    <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+            <h5>
+                Цитата из книги 
+                <a class="text-decoration-none text-success" href="{{ quote.book.get_absolute_url }}"><b>{{ quote.book }}</b></a>
+            </h5>
+            <p class="text-muted">{{ quote.creation_date }}</p>
+        </div>
+        <p class="text-muted fs-4">{{ quote.text }}</p>
+    </li>
+{% empty %}
+<h3>Похоже у вас нет сохраненных цитат :[</h3>
+{% endfor %}
+</ul>
+{% endblock content %}
