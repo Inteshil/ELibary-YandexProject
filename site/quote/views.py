@@ -12,6 +12,7 @@ class QuoteCatalog(ListView):
     template_name = 'quote/quote_list.html'
     queryset = Quote.objects.for_catalog()
     context_object_name = 'quotes'
+    paginate_by = 5
     extra_context = {
         'page_title': 'Список цитат'
     }
@@ -21,6 +22,7 @@ class UserQuoteCatalog(LoginRequiredMixin, ListView):
     template_name = 'quote/user_quote_list.html'
     context_object_name = 'quotes'
     queryset = Quote.objects.all()
+    paginate_by = 5
     extra_context = {
         'page_title': 'Ваши цитаты'
     }
@@ -31,7 +33,7 @@ class UserQuoteCatalog(LoginRequiredMixin, ListView):
 
 @login_required
 def create_quote(request, *args, **kwargs):
-    if request.method != 'POST' or not 'quote' in request.POST:
+    if request.method != 'POST' or 'quote' not in request.POST:
         return HttpResponseNotFound()
     book = get_object_or_404(Book, pk=kwargs['book_id'])
     text = request.POST['quote']
@@ -40,4 +42,8 @@ def create_quote(request, *args, **kwargs):
         book=book,
         text=text
     )
-    return redirect('catalog:book_chapter', book_id=kwargs['book_id'], chapter_id=kwargs['chapter_id'])
+    return redirect(
+        'catalog:book_chapter',
+        book_id=kwargs['book_id'],
+        chapter_id=kwargs['chapter_id']
+    )

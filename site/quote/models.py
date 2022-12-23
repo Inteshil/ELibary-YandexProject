@@ -15,7 +15,8 @@ class QuoteManager(models.Manager):
         return (
             self.get_queryset()
             .annotate(text_len=Length('text'))
-            .filter(text_len__gte=50)
+            .filter(text_len__gte=20)
+            .filter(text_len__lte=2000)
             )
 
 
