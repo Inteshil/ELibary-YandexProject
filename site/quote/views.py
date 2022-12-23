@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 
@@ -32,7 +32,7 @@ class UserQuoteCatalog(LoginRequiredMixin, ListView):
 @login_required
 def create_quote(request, *args, **kwargs):
     if request.method != 'POST' or not 'quote' in request.POST:
-        return HttpResponseForbidden()
+        return HttpResponseNotFound()
     book = get_object_or_404(Book, pk=kwargs['book_id'])
     text = request.POST['quote']
     Quote.objects.create(
