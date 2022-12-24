@@ -30,11 +30,13 @@ class Quote(models.Model):
     text = models.CharField('текст', max_length=1000)
     creation_date = models.DateTimeField('дата создания', auto_now_add=True)
 
+    objects = QuoteManager()
+
     class Meta:
+        verbose_name = 'цитата'
+        verbose_name_plural = 'цитаты'
         default_related_name = 'quotes'
         ordering = ('-creation_date',)
-
-    objects = QuoteManager()
 
     def __str__(self):
         return f'Цитата {self.user}'
