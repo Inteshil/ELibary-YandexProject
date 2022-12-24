@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <h1 class="text-center mb-5">Ваши цитаты</h1>
@@ -10,7 +11,12 @@
                 Цитата из книги 
                 <a class="text-decoration-none text-success" href="{{ quote.book.get_absolute_url }}"><b>{{ quote.book }}</b></a>
             </h5>
-            <p class="text-muted">{{ quote.creation_date }}</p>
+            <div class="d-flex">
+                <p class="text-muted px-3">{{ quote.creation_date }}</p>
+                <a class="text-decoration-none" href="{% url 'quote:delete' quote.pk %}">
+                    <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
+                </a>
+            </div>
         </div>
         <p class="text-muted fs-4">{{ quote.text }}</p>
     </li>
