@@ -77,7 +77,7 @@
 
         <div class="tab-content container mb-5" id="pills-tabContent">
             <div class="tab-pane fade {% if active_elem == 'main' %}show active{% endif %}" id="main" role="tabpanel" aria-labelledby="main-tab">
-                <p>{{ book.description }}</p>
+                <p class="text-break">{{ book.description }}</p>
                 {% for tag in book.tags.all %}
                 <small class="bg-light border bg-light rounded p-1">{{ tag.name }}</small>
                 {% endfor %}
@@ -182,7 +182,7 @@
                                         </a>
                                         {% endif %}
                                     </div>
-                                    <p class="text-decoration-none fw-light">{{ comment.text|safe }}</p>
+                                    <p class="text-decoration-none fw-light text-break">{{ comment.text|safe }}</p>
                                 </div>
                             </div>
                         </li>
