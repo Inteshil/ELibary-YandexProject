@@ -14,6 +14,8 @@ urlpatterns = [
     path('catalog/', include('catalog.urls')),
     path('download/', include('download.urls')),
     path('payment/', include('payment.urls')),
+    path('quote/', include('quote.urls')),
+    path('reports/', include('reports.urls')),
 ]
 
 if settings.DEBUG:

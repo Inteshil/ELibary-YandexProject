@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mb-5">Ваши цитаты</h1>
+<ul class="list-group list-group-flush">
+{% for quote in quotes %}
+    <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+            <h5>
+                Цитата из книги 
+                <a class="text-decoration-none text-success" href="{{ quote.book.get_absolute_url }}"><b>{{ quote.book }}</b></a>
+            </h5>
+            <div class="d-flex">
+                <p class="text-muted px-3">{{ quote.creation_date }}</p>
+                <a class="text-decoration-none" href="{% url 'quote:delete' quote.pk %}">
+                    <img src="{% static 'catalog/img/delete.png' %}" alt="Удалить" width-"20px" height="20px">
+                </a>
+            </div>
+        </div>
+        <p class="text-muted fs-4 text-break">{{ quote.text }}</p>
+    </li>
+{% empty %}
+<h3>Похоже у вас нет сохраненных цитат :[</h3>
+{% endfor %}
+</ul>
+<div class="d-flex justify-content-md-between mt-2">
+    <div class="nav nav-pills d-flex justify-content-left mt-2">
+        {% if page_obj.has_previous %}
+            <a href="?page=1"><button class="nav-link active" type="button">&laquo; начало</button></a>
+            <a href="?page={{ page_obj.previous_page_number }}"><button class="nav-link active mx-2" type="button">предыдущая странциа</button></a>
+        {% endif %}
+    </div>
+
+    <p class="align-self-center mt-3">
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+    </p>
+
+    <div class="nav nav-pills d-flex justify-content-rigth mt-2">
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"><button class="nav-link active" type="button">следующая страница</button></a>
+            <a href="?page={{ page_obj.paginator.num_pages }}"><button class="nav-link active mx-2" type="button">конец &raquo;</button></a>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

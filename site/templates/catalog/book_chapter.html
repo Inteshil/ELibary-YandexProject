@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extrahead %}
+<script src="{% static 'js/quote_manager.js' %}"></script>
+{% endblock extrahead %}
 
 {% block main_menu %}
 <nav class="navbar sticky-top navbar-dark bg-dark">
@@ -25,7 +28,7 @@
             {% endif %}
         </div>
 
-        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#save_quote">
+        <button type="button" id="quote_modal_form" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#save_quote">
             Сохранить цитату
           </button>
     </div>
@@ -36,6 +39,8 @@
 {% block content %}
 <!-- Окно сохранения цитаты -->
 <div class="modal fade" id="save_quote" tabindex="-1" aria-labelledby="save_quote_label" aria-hidden="true">
+<form method="POST" enctype="multipart/form-data" action="{% url 'quote:create' chapter.book.pk chapter.pk %}">
+{% csrf_token %}
 <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header">
@@ -43,17 +48,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
     </div>
     <div class="modal-body">
-        <p class="text-muted">Иногда хватает мгновения, чтобы забыть жизнь, а иногда не хватает жизни, чтобы забыть мгновение.</p>
+        <p class="text-muted" id="nohidden_quote">Чтобы сохранить цитату, выделите нужные фрагмент в тексте и нажмите на кнопку</p>
+        <input type="hidden" name="quote" id="hidden_quote">
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Закрыть</button>
-        <button type="button" class="btn btn-outline-success">Сохранить</button>
+        <button type="submit" class="btn btn-outline-success">Сохранить</button>
     </div>
     </div>
 </div>
+</form>
 </div>
 
-<div class="row mt-5">
+
+<div class="row mt-5 text-break">
     {{ chapter.content|safe }}
 </div>
 

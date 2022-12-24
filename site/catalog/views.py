@@ -22,16 +22,12 @@ from rating.models import BookRating
 class CatalogView(FilterView):
     template_name = 'catalog/book_list.html'
     queryset = Book.objects.enabled()
+    paginate_by = 40
     filterset_class = BookFilter
     context_object_name = 'books'
     extra_context = {
         'page_title': 'Каталог'
     }
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['should_open_filter'] = len(self.request.GET) != 0
-        return context
 
 
 class AuthorCatalogView(LoginRequiredMixin, CatalogView):
@@ -78,7 +74,7 @@ class BookDetailView(DetailView):
         comments_paginator = Paginator(
             BookComment.objects.get_comments_for_book(
                 self.kwargs['book_id']
-            ), 2
+            ), 4
         )
         try:
             comments_number = self.kwargs['comment_page']

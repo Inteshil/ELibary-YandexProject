@@ -1,10 +1,10 @@
-Name: {{ book.name }}
-Author: {{ book.author }}
+Название: {{ book.name }}
+Автор: {{ book.author }}
 
-Chapters:
+Оглавление:
 {% for chapter in chapters %}{{ forloop.counter }}) {{ chapter.name }}
 {% endfor%}
-{% for chapter in chapters %}Chapter #{{ forloop.counter }} {{ chapter.name }}
+{% for chapter in chapters %}Часть №{{ forloop.counter }} {{ chapter.name }}
 {{ chapter.content|striptags }}
 
 {% endfor%}
