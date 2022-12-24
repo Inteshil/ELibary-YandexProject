@@ -13,4 +13,5 @@
 
 {% block end_form %}
 <a class="btn btn-primary" href="{% url 'users:change_password' %}">Изменить пароль</a>
+<a class="btn btn-success" href="{{ request.user.get_absolute_url }}">Мой профиль для других</a>
 {% endblock end_form %}

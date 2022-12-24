@@ -15,7 +15,7 @@ class RegisterView(CreateView):
     form_class = forms.RegisterUserForm
     template_name = 'base_form.html'
     extra_context = {
-        'title_name': 'Регистрация',
+        'page_title': 'Регистрация',
         'button_text': 'Создать аккаунт',
         'form_title': 'Регистрация',
     }
@@ -39,7 +39,7 @@ class LoginView(AuthViews.LoginView):
     form_class = forms.LoginUserForm
     template_name = 'users/login_form.html'
     extra_context = {
-        'title_name': 'Вход',
+        'page_title': 'Вход',
         'button_text': 'Войти',
         'form_title': 'Вход в аккаунт',
     }
@@ -54,7 +54,7 @@ class ChangePasswordView(LoginRequiredMixin, AuthViews.PasswordChangeView):
     success_url = reverse_lazy('users:profile')
     form_class = forms.ChangeUserPasswordForm
     extra_context = {
-        'title_name': 'Изменить пароль',
+        'page_title': 'Изменить пароль',
         'form_title': 'Изменить пароль',
         'button_text': 'Изменить'
     }
@@ -77,7 +77,7 @@ class ResetPasswordView(AuthViews.PasswordResetView):
     model = User
     success_url = reverse_lazy('static_pages:home')
     extra_context = {
-        'title_name': 'Восстановление пароля',
+        'page_title': 'Восстановление пароля',
         'form_title': 'Восстановление пароля',
         'button_text': 'Восстановить'
     }
@@ -97,7 +97,7 @@ class PasswordResetConfirmView(AuthViews.PasswordResetConfirmView):
     form_class = forms.ResetUserPasswordConfirmForm
     success_url = reverse_lazy('users:login')
     extra_context = {
-        'title_name': 'Сброс пароля',
+        'page_title': 'Сброс пароля',
         'form_title': 'Сброс пароля',
         'button_text': 'Изменить пароль'
     }
@@ -118,7 +118,7 @@ class UserDetailView(DetailView):
     pk_url_kwarg = 'user_id'
     context_object_name = 'user'
     extra_context = {
-        'title_name': 'Профиль пользователя'
+        'page_title': 'Профиль'
     }
 
 
@@ -128,7 +128,7 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
     template_name = 'users/profile_form.html'
     success_url = reverse_lazy('users:profile')
     extra_context = {
-        'title_name': 'Мой профиль',
+        'page_title': 'Мой профиль',
         'button_text': 'Сохранить',
         'form_title': 'Профиль',
     }

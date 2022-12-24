@@ -5,13 +5,11 @@
     <h1 class="title-text">Главная страница</h1>
     <h3>Добро пожаловать в нашу электронную библиотеку!</h3>
 </div>
-<h2 >Интересно:<h2>
+<h2 class="text-muted pt-5">Популярные книги</h2>
 <div class="album py-5">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       {% for book in books %}
         {% include 'catalog/book_card.html' %}
-      {% empty %}
-      <h2>Мы не нашли ни одной книги :[</h2>
       {% endfor %}
     </div>
 </div>

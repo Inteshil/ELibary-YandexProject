@@ -48,7 +48,14 @@
     </div>
     
     <div class="col-9 bg-white">
-        <h1 class="text-center title-text">{{ book.name|capfirst }}</h1>
+        <div class="d-flex align-items-center">
+            <h1 class="title-text flex-grow-1">{{ book.name|capfirst }}</h1>
+            {% if request.user != book.author %}
+            <a class="text-decoration-none px-2" href="{% url 'reports:create' book.pk %}">
+                <img src="{% static 'catalog/img/report.png' %}" alt="Пожаловаться" width="30" height="30">
+            </a>
+            {% endif %}
+        </div>
         <hr>
 
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
